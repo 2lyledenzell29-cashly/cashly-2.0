@@ -270,12 +270,13 @@ export class MigrationController {
   migrateFromOldTable = async (req: Request, res: Response): Promise<void> => {
     try {
       const user = req.user as JWTPayload;
-      const { placeholder_user_id, placeholder_wallet_id } = req.body;
+      const { placeholder_user_id, placeholder_wallet_id, filter_by_user_id } = req.body;
 
       const result: MigrationResult = await this.migrationService.migrateFromOldTransactionsTable(
         user.userId,
         placeholder_user_id || '00000000-0000-0000-0000-000000000001',
-        placeholder_wallet_id || '11111111-1111-1111-1111-111111111111'
+        placeholder_wallet_id || '11111111-1111-1111-1111-111111111111',
+        filter_by_user_id
       );
 
       res.status(200).json({

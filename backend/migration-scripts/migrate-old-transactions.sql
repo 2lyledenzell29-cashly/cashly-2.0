@@ -22,7 +22,7 @@ VALUES (
   false
 ) ON CONFLICT (id) DO NOTHING;
 
--- Step 3: Migrate transactions from old table to new table
+-- Step 3: Migrate transactions from old table to new table for specific user
 INSERT INTO transactions_2_0 (
   user_id, 
   wallet_id, 
@@ -50,11 +50,12 @@ SELECT
   true AS is_migrated,
   COALESCE(id::text, user_id::text || '_' || created_at::text) AS legacy_id
 FROM transactions
-WHERE NOT EXISTS (
-  SELECT 1 
-  FROM transactions_2_0 t2 
-  WHERE t2.legacy_id = transactions.id::text
-);
+WHERE user_id = 'user_33hIcBiQAQkqJgNOSKoJ5tMTjIz'
+  AND NOT EXISTS (
+    SELECT 1 
+    FROM transactions_2_0 t2 
+    WHERE t2.legacy_id = transactions.id::text
+  );
 
 -- Step 4: Show migration results
 SELECT 

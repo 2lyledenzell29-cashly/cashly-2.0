@@ -152,6 +152,23 @@ export class AuthService {
     }
   }
 
+  async getCurrentUser(userId: string): Promise<Omit<User, 'password_hash'>> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new Error('USER_NOT_FOUND');
+    }
+
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      wallet_limit: user.wallet_limit,
+      created_at: user.created_at,
+      updated_at: user.updated_at
+    };
+  }
+
   private validatePasswordStrength(password: string): void {
     // Password must be at least 8 characters long
     if (password.length < 8) {

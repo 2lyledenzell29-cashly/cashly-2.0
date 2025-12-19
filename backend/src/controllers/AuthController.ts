@@ -115,6 +115,30 @@ export class AuthController {
     }
   };
 
+  me = async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!req.user) {
+        res.status(401).json({
+          success: false,
+          error: {
+            code: 'AUTH_TOKEN_MISSING',
+            message: 'Authentication required'
+          }
+        } as ApiResponse);
+        return;
+      }
+
+      const user = await this.authService.getCurrentUser(req.user.userId);
+
+      res.status(200).json({
+        success: true,
+        data: user
+      } as ApiResponse);
+    } catch (error) {
+      this.handleAuthError(error, res);
+    }
+  };
+
   private handleAuthError(error: any, res: Response): void {
     const errorMessage = error.message || 'INTERNAL_SERVER_ERROR';
 

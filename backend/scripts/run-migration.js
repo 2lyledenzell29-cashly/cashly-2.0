@@ -69,11 +69,11 @@ async function runMigration() {
       return;
     }
 
-    // Step 4: Count existing transactions in old table
-    console.log('📝 Step 4: Counting transactions in old table...');
-    const countResult = await db.raw('SELECT COUNT(*) as count FROM transactions');
+    // Step 4: Count existing transactions in old table for specific user
+    console.log('📝 Step 4: Counting transactions in old table for specific user...');
+    const countResult = await db.raw(`SELECT COUNT(*) as count FROM transactions WHERE user_id = 'user_33hIcBiQAQkqJgNOSKoJ5tMTjIz'`);
     const totalTransactions = parseInt(countResult.rows[0].count);
-    console.log(`📊 Found ${totalTransactions} transactions to migrate`);
+    console.log(`📊 Found ${totalTransactions} transactions to migrate for user user_33hIcBiQAQkqJgNOSKoJ5tMTjIz`);
 
     if (totalTransactions === 0) {
       console.log('ℹ️  No transactions to migrate.');
@@ -111,11 +111,12 @@ async function runMigration() {
           true AS is_migrated,
           COALESCE(id::text, user_id::text || '_' || created_at::text) AS legacy_id
         FROM transactions
-        WHERE NOT EXISTS (
-          SELECT 1 
-          FROM transactions_2_0 t2 
-          WHERE t2.legacy_id = transactions.id::text
-        )
+        WHERE user_id = 'user_33hIcBiQAQkqJgNOSKoJ5tMTjIz'
+          AND NOT EXISTS (
+            SELECT 1 
+            FROM transactions_2_0 t2 
+            WHERE t2.legacy_id = transactions.id::text
+          )
       `);
       
       const migratedCount = migrationResult.rowCount || 0;

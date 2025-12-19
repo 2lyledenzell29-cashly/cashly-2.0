@@ -309,7 +309,8 @@ export class MigrationService {
   async migrateFromOldTransactionsTable(
     adminUserId: string,
     placeholderUserId: string = '00000000-0000-0000-0000-000000000001',
-    placeholderWalletId: string = '11111111-1111-1111-1111-111111111111'
+    placeholderWalletId: string = '11111111-1111-1111-1111-111111111111',
+    filterByUserId?: string
   ): Promise<MigrationResult> {
     // Create migration status record
     const migrationStatus = await this.migrationRepository.createMigrationStatus({
@@ -356,7 +357,8 @@ export class MigrationService {
       const result = await this.migrationRepository.migrateOldTransactions(
         placeholderUserId,
         placeholderWalletId,
-        adminUserId
+        adminUserId,
+        filterByUserId
       );
 
       // Update final status

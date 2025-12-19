@@ -55,6 +55,24 @@ export interface Budget {
   updated_at: string;
 }
 
+export interface BudgetStatus {
+  budget: Budget;
+  total_spent: number;
+  remaining: number;
+  percentage_used: number;
+  status: 'green' | 'yellow' | 'orange' | 'red';
+}
+
+export interface CreateBudgetRequest {
+  wallet_id: string;
+  month: string;
+  limit: number;
+}
+
+export interface UpdateBudgetRequest {
+  limit?: number;
+}
+
 // Reminder types
 export interface Reminder {
   id: string;

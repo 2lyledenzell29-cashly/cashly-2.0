@@ -174,9 +174,25 @@ export class MigrationRepository extends BaseRepository<MigrationStatus> {
   async migrateOldTransactions(
     placeholderUserId: string,
     placeholderWalletId: string,
-    adminUserId: string
+    adminUserId: string,
+    filterByUserId?: string
   ): Promise<{ migrated_count: number }> {
-    // Migrate all transactions from old table to new table
+    // Build the WHERE clause
+    let whereClause = `WHERE id NOT IN (
+      SELECT legacy_id::uuid 
+      FROM transactions_2_0 
+      WHERE legacy_id IS NOT NULL 
+      AND legacy_id ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    )`;
+    
+    const params = [placeholderUserId, placeholderWalletId, adminUserId];
+    
+    if (filterByUserId) {
+      whereClause += ` AND user_id = ?`;
+      params.push(filterByUserId);
+    }
+
+    // Migrate transactions from old table to new table
     const result = await this.db.raw(`
       INSERT INTO transactions_2_0 (
         user_id, 
@@ -205,13 +221,8 @@ export class MigrationRepository extends BaseRepository<MigrationStatus> {
         true AS is_migrated,
         COALESCE(id::text, user_id::text || '_' || created_at::text) AS legacy_id
       FROM transactions
-      WHERE id NOT IN (
-        SELECT legacy_id::uuid 
-        FROM transactions_2_0 
-        WHERE legacy_id IS NOT NULL 
-        AND legacy_id ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
-      )
-    `, [placeholderUserId, placeholderWalletId, adminUserId]);
+      ${whereClause}
+    `, params);
 
     return { migrated_count: result.rowCount || 0 };
   }

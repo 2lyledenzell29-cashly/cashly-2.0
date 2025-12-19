@@ -90,7 +90,8 @@ export class FamilyWalletAccessService {
       .map(membership => membership.wallet_id);
     
     // Combine and deduplicate
-    return [...new Set([...ownedWalletIds, ...familyWalletIds])];
+    const combined = ownedWalletIds.concat(familyWalletIds);
+    return Array.from(new Set(combined));
   }
 
   /**
