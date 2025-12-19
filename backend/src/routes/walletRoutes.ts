@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { WalletController } from '../controllers/WalletController';
 import { authenticate } from '../middleware/authMiddleware';
+import { validateWalletAccess } from '../middleware/ownershipMiddleware';
 
 const router = Router();
 const walletController = new WalletController();
@@ -15,18 +16,18 @@ router.get('/', walletController.getUserWallets);
 router.get('/default', walletController.getDefaultWallet);
 
 // GET /api/wallets/:id - Get specific wallet
-router.get('/:id', walletController.getWalletById);
+router.get('/:id', validateWalletAccess(), walletController.getWalletById);
 
 // POST /api/wallets - Create new wallet
 router.post('/', walletController.createWallet);
 
 // PUT /api/wallets/:id - Update wallet
-router.put('/:id', walletController.updateWallet);
+router.put('/:id', validateWalletAccess(), walletController.updateWallet);
 
 // PUT /api/wallets/:id/set-default - Set wallet as default
-router.put('/:id/set-default', walletController.setDefaultWallet);
+router.put('/:id/set-default', validateWalletAccess(), walletController.setDefaultWallet);
 
 // DELETE /api/wallets/:id - Delete wallet
-router.delete('/:id', walletController.deleteWallet);
+router.delete('/:id', validateWalletAccess(), walletController.deleteWallet);
 
 export default router;

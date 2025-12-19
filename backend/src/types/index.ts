@@ -44,6 +44,8 @@ export interface Transaction {
   created_by: string;
   created_at: Date;
   updated_at: Date;
+  is_migrated?: boolean;
+  legacy_id?: string;
 }
 
 // Budget types
@@ -382,4 +384,69 @@ export interface ChartOptions {
   period?: 'monthly' | 'weekly';
   months?: number;
   type?: 'Income' | 'Expense';
+}
+
+// Migration types
+export interface LegacyTransaction {
+  id?: string | number; // Legacy ID (will be ignored)
+  title: string;
+  amount: number;
+  created_at: Date | string;
+  user_id?: string; // Optional, for manual association
+  wallet_id?: string | null; // Optional, for manual association
+  category_id?: string | null; // Optional, for manual association
+}
+
+export interface MigrationTransaction {
+  id: string; // New UUID
+  user_id: string;
+  wallet_id: string;
+  category_id: string | null;
+  title: string;
+  amount: number;
+  type: 'Income' | 'Expense';
+  created_by: string;
+  created_at: Date;
+  updated_at: Date;
+  is_migrated: boolean;
+  legacy_id?: string | number; // Reference to original legacy ID
+}
+
+export interface MigrationStatus {
+  id: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  total_records: number;
+  processed_records: number;
+  successful_records: number;
+  failed_records: number;
+  error_message?: string;
+  started_at: Date;
+  completed_at?: Date;
+  created_by: string;
+}
+
+export interface MigrationRequest {
+  legacy_data: LegacyTransaction[];
+  default_user_id?: string; // User to assign transactions to if not specified
+  default_type?: 'Income' | 'Expense'; // Default transaction type
+}
+
+export interface MigrationResult {
+  migration_id: string;
+  status: 'completed' | 'partial' | 'failed';
+  total_records: number;
+  successful_records: number;
+  failed_records: number;
+  errors: Array<{
+    record_index: number;
+    legacy_id?: string | number;
+    error: string;
+  }>;
+}
+
+export interface PostMigrationAssociationRequest {
+  transaction_id: string;
+  user_id?: string;
+  wallet_id?: string;
+  category_id?: string | null;
 }

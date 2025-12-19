@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { ReminderController } from '../controllers/ReminderController';
 import { authenticate } from '../middleware/authMiddleware';
+import { validateReminderAccess } from '../middleware/ownershipMiddleware';
 
 const router = Router();
 const reminderController = new ReminderController();
@@ -21,24 +22,24 @@ router.get('/schedule', reminderController.getRemindersSchedule);
 router.get('/due', reminderController.getDueReminders);
 
 // GET /api/reminders/:id - Get specific reminder
-router.get('/:id', reminderController.getReminderById);
+router.get('/:id', validateReminderAccess(), reminderController.getReminderById);
 
 // GET /api/reminders/:id/occurrences - Get upcoming occurrences for a reminder
-router.get('/:id/occurrences', reminderController.getReminderOccurrences);
+router.get('/:id/occurrences', validateReminderAccess(), reminderController.getReminderOccurrences);
 
 // POST /api/reminders - Create new reminder
 router.post('/', reminderController.createReminder);
 
 // PUT /api/reminders/:id - Update reminder
-router.put('/:id', reminderController.updateReminder);
+router.put('/:id', validateReminderAccess(), reminderController.updateReminder);
 
 // DELETE /api/reminders/:id - Delete reminder
-router.delete('/:id', reminderController.deleteReminder);
+router.delete('/:id', validateReminderAccess(), reminderController.deleteReminder);
 
 // PUT /api/reminders/:id/deactivate - Deactivate reminder
-router.put('/:id/deactivate', reminderController.deactivateReminder);
+router.put('/:id/deactivate', validateReminderAccess(), reminderController.deactivateReminder);
 
 // PUT /api/reminders/:id/activate - Activate reminder
-router.put('/:id/activate', reminderController.activateReminder);
+router.put('/:id/activate', validateReminderAccess(), reminderController.activateReminder);
 
 export default router;

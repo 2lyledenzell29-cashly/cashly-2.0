@@ -74,4 +74,60 @@ export class ReminderRepository extends BaseRepository<Reminder> {
 
     return query.orderBy('due_date', 'asc').select('*');
   }
+
+  // Enhanced security methods for data isolation
+  async findByIdWithOwnershipValidation(id: string, userId: string): Promise<Reminder | null> {
+    const result = await this.db(this.tableName)
+      .where({ id, user_id: userId })
+      .first();
+    return result || null;
+  }
+
+  async findByIdWithAccess(id: string, userId: string, accessibleWalletIds: string[]): Promise<Reminder | null> {
+    const result = await this.db(this.tableName)
+      .where({ id })
+      .where(function() {
+        this.where({ user_id: userId })
+          .orWhere(function() {
+            if (accessibleWalletIds.length > 0) {
+              this.whereIn('wallet_id', accessibleWalletIds);
+            } else {
+              this.where('1', '0'); // Always false condition
+            }
+          });
+      })
+      .first();
+    return result || null;
+  }
+
+  async updateWithOwnershipValidation(id: string, userId: string, data: Partial<Reminder>): Promise<Reminder | null> {
+    const [result] = await this.db(this.tableName)
+      .where({ id, user_id: userId })
+      .update({ ...data, updated_at: new Date() })
+      .returning('*');
+    return result || null;
+  }
+
+  async deleteWithOwnershipValidation(id: string, userId: string): Promise<boolean> {
+    const deletedRows = await this.db(this.tableName)
+      .where({ id, user_id: userId })
+      .del();
+    return deletedRows > 0;
+  }
+
+  async findAccessibleReminders(userId: string, accessibleWalletIds: string[]): Promise<Reminder[]> {
+    return this.db(this.tableName)
+      .where(function() {
+        this.where({ user_id: userId })
+          .orWhere(function() {
+            if (accessibleWalletIds.length > 0) {
+              this.whereIn('wallet_id', accessibleWalletIds);
+            } else {
+              this.where('1', '0'); // Always false condition
+            }
+          });
+      })
+      .orderBy('due_date', 'asc')
+      .select('*');
+  }
 }

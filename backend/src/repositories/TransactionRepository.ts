@@ -235,4 +235,52 @@ export class TransactionRepository extends BaseRepository<Transaction> {
 
     return query.orderBy('created_at', 'desc').select('*');
   }
+
+  // Enhanced security methods for data isolation
+  async findByIdWithOwnershipValidation(id: string, userId: string): Promise<Transaction | null> {
+    const result = await this.db(this.tableName)
+      .where({ id, user_id: userId })
+      .first();
+    return result || null;
+  }
+
+  async findByIdWithWalletAccess(id: string, accessibleWalletIds: string[]): Promise<Transaction | null> {
+    if (accessibleWalletIds.length === 0) {
+      return null;
+    }
+
+    const result = await this.db(this.tableName)
+      .where({ id })
+      .whereIn('wallet_id', accessibleWalletIds)
+      .first();
+    return result || null;
+  }
+
+  async updateWithOwnershipValidation(id: string, userId: string, data: Partial<Transaction>): Promise<Transaction | null> {
+    const [result] = await this.db(this.tableName)
+      .where({ id, user_id: userId })
+      .update({ ...data, updated_at: new Date() })
+      .returning('*');
+    return result || null;
+  }
+
+  async deleteWithOwnershipValidation(id: string, userId: string): Promise<boolean> {
+    const deletedRows = await this.db(this.tableName)
+      .where({ id, user_id: userId })
+      .del();
+    return deletedRows > 0;
+  }
+
+  async countByUserAndWallets(userId: string, walletIds: string[]): Promise<number> {
+    if (walletIds.length === 0) {
+      return 0;
+    }
+
+    const result = await this.db(this.tableName)
+      .where({ user_id: userId })
+      .whereIn('wallet_id', walletIds)
+      .count('* as count')
+      .first();
+    return parseInt(result?.count as string) || 0;
+  }
 }

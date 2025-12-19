@@ -38,4 +38,53 @@ export class BudgetRepository extends BaseRepository<Budget> {
       .where({ wallet_id: walletId })
       .del();
   }
+
+  // Enhanced security methods for data isolation
+  async findByIdWithWalletAccess(id: string, accessibleWalletIds: string[]): Promise<Budget | null> {
+    if (accessibleWalletIds.length === 0) {
+      return null;
+    }
+
+    const result = await this.db(this.tableName)
+      .where({ id })
+      .whereIn('wallet_id', accessibleWalletIds)
+      .first();
+    return result || null;
+  }
+
+  async updateWithWalletAccess(id: string, accessibleWalletIds: string[], data: Partial<Budget>): Promise<Budget | null> {
+    if (accessibleWalletIds.length === 0) {
+      return null;
+    }
+
+    const [result] = await this.db(this.tableName)
+      .where({ id })
+      .whereIn('wallet_id', accessibleWalletIds)
+      .update({ ...data, updated_at: new Date() })
+      .returning('*');
+    return result || null;
+  }
+
+  async deleteWithWalletAccess(id: string, accessibleWalletIds: string[]): Promise<boolean> {
+    if (accessibleWalletIds.length === 0) {
+      return false;
+    }
+
+    const deletedRows = await this.db(this.tableName)
+      .where({ id })
+      .whereIn('wallet_id', accessibleWalletIds)
+      .del();
+    return deletedRows > 0;
+  }
+
+  async findUserAccessibleBudgets(accessibleWalletIds: string[]): Promise<Budget[]> {
+    if (accessibleWalletIds.length === 0) {
+      return [];
+    }
+
+    return this.db(this.tableName)
+      .whereIn('wallet_id', accessibleWalletIds)
+      .orderBy('month', 'desc')
+      .select('*');
+  }
 }

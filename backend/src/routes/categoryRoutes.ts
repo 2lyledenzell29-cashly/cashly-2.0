@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { CategoryController } from '../controllers/CategoryController';
 import { authenticate } from '../middleware/authMiddleware';
+import { validateCategoryAccess } from '../middleware/ownershipMiddleware';
 
 const router = Router();
 const categoryController = new CategoryController();
@@ -15,18 +16,18 @@ router.get('/', categoryController.getUserCategories);
 router.get('/uncategorized/transactions', categoryController.getUncategorizedTransactions);
 
 // GET /api/categories/:id - Get specific category
-router.get('/:id', categoryController.getCategoryById);
+router.get('/:id', validateCategoryAccess(), categoryController.getCategoryById);
 
 // POST /api/categories - Create new category
 router.post('/', categoryController.createCategory);
 
 // PUT /api/categories/:id - Update category
-router.put('/:id', categoryController.updateCategory);
+router.put('/:id', validateCategoryAccess(), categoryController.updateCategory);
 
 // DELETE /api/categories/:id - Delete category
-router.delete('/:id', categoryController.deleteCategory);
+router.delete('/:id', validateCategoryAccess(), categoryController.deleteCategory);
 
 // GET /api/categories/:id/transactions/count - Get transaction count for category
-router.get('/:id/transactions/count', categoryController.getCategoryTransactionCount);
+router.get('/:id/transactions/count', validateCategoryAccess(), categoryController.getCategoryTransactionCount);
 
 export default router;
