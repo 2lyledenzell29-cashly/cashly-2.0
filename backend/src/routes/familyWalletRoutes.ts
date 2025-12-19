@@ -1,0 +1,24 @@
+import { Router } from 'express';
+import { FamilyWalletController } from '../controllers/FamilyWalletController';
+import { authenticate } from '../middleware/authMiddleware';
+
+const router = Router();
+const familyWalletController = new FamilyWalletController();
+
+// Apply authentication middleware to all routes
+router.use(authenticate);
+
+// Family wallet management routes
+router.post('/', familyWalletController.createFamilyWallet);
+router.get('/user', familyWalletController.getUserFamilyWallets);
+router.get('/:walletId/members', familyWalletController.getFamilyWalletMembers);
+router.post('/:walletId/invite', familyWalletController.inviteToFamilyWallet);
+router.delete('/:walletId/members/:memberId', familyWalletController.removeFamilyWalletMember);
+router.get('/:walletId/invitations', familyWalletController.getFamilyWalletInvitations);
+
+// Invitation management routes
+router.get('/invitations/pending', familyWalletController.getUserPendingInvitations);
+router.post('/invitations/:invitationId/accept', familyWalletController.acceptInvitation);
+router.post('/invitations/:invitationId/decline', familyWalletController.declineInvitation);
+
+export { router as familyWalletRoutes };
