@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Wallet, FamilyWalletMember, Invitation } from '@/types';
 import { useFamilyWallet } from '@/contexts/FamilyWalletContext';

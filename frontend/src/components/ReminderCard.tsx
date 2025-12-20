@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Reminder } from '@/types';
 import { useReminder } from '@/contexts/ReminderContext';

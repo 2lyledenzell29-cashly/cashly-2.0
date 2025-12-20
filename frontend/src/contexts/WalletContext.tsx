@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Wallet } from '@/types';
 import { WalletService } from '@/utils/walletApi';

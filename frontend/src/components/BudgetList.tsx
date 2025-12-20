@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Budget, Wallet } from '@/types';
 import { useBudget } from '@/contexts/BudgetContext';

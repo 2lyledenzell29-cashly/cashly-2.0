@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Transaction } from '@/types';
 import { useTransaction } from '@/contexts/TransactionContext';

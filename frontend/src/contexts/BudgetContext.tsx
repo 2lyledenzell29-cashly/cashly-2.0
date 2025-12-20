@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { Budget, BudgetStatus, CreateBudgetRequest, UpdateBudgetRequest } from '@/types';
 import { budgetApi } from '@/utils/budgetApi';
