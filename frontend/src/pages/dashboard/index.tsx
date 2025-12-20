@@ -8,6 +8,7 @@ import ReportFilters from '@/components/dashboard/ReportFilters';
 import TransactionReportTable from '@/components/dashboard/TransactionReportTable';
 import CategoryBreakdownTable from '@/components/dashboard/CategoryBreakdownTable';
 import ExportButtons from '@/components/dashboard/ExportButtons';
+import UpcomingReminders from '@/components/dashboard/UpcomingReminders';
 import SpendingTrendsChart from '@/components/charts/SpendingTrendsChart';
 import CategoryPieChart from '@/components/charts/CategoryPieChart';
 import IncomeExpenseBarChart from '@/components/charts/IncomeExpenseBarChart';
@@ -134,6 +135,9 @@ const DashboardContent: React.FC = () => {
           {/* Tab Content */}
           {activeTab === 'overview' && (
             <div className="space-y-8">
+              {/* Reminders Section */}
+              <UpcomingReminders />
+              
               {/* Charts Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white rounded-lg shadow p-6">
