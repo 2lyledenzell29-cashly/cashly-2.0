@@ -3,9 +3,10 @@
   "outputDirectory": "frontend/.next",
   "installCommand": "npm install && cd frontend && npm install",
   "framework": "nextjs",
-  "functions": {
-    "frontend/src/pages/api/**/*.ts": {
-      "runtime": "nodejs18.x"
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     }
-  }
+  ]
 }
