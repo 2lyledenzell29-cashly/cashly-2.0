@@ -35,9 +35,9 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
   };
 
   const formatAmount = (amount: number, type: 'Income' | 'Expense') => {
-    const formatted = new Intl.NumberFormat('en-US', {
+    const formatted = new Intl.NumberFormat('en-PH', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'PHP',
     }).format(amount);
 
     return type === 'Income' ? `+${formatted}` : `-${formatted}`;

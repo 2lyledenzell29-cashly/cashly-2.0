@@ -132,20 +132,25 @@ export const ReminderProvider: React.FC<ReminderProviderProps> = ({ children }) 
   }, []);
 
   const createReminder = useCallback(async (reminderData: CreateReminderRequest): Promise<Reminder | null> => {
+    console.log('ReminderContext: createReminder called with data:', reminderData);
     try {
       setLoading(true);
       setError(null);
+      console.log('ReminderContext: Loading set to true, calling API...');
       const newReminder = await reminderApi.createReminder(reminderData);
+      console.log('ReminderContext: API call successful, result:', newReminder);
       
       setReminders(prev => [...prev, newReminder]);
       toast.success('Reminder created successfully');
       return newReminder;
     } catch (err) {
+      console.error('ReminderContext: Error creating reminder:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to create reminder';
       setError(errorMessage);
       toast.error(errorMessage);
       return null;
     } finally {
+      console.log('ReminderContext: Setting loading to false');
       setLoading(false);
     }
   }, []);

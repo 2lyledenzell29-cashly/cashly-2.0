@@ -189,7 +189,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
         {/* Budget Limit */}
         <div>
           <label htmlFor="limit" className="block text-sm font-medium text-gray-700 mb-1">
-            Budget Limit ($)
+            Budget Limit (₱)
           </label>
           <input
             type="number"

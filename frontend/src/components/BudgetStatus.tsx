@@ -89,11 +89,11 @@ export const BudgetStatus: React.FC<BudgetStatusProps> = ({
 
   const formatCurrency = (amount: number | null | undefined): string => {
     if (amount === null || amount === undefined || isNaN(amount)) {
-      return '$0.00';
+      return '₱0.00';
     }
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-PH', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'PHP',
     }).format(amount);
   };
 

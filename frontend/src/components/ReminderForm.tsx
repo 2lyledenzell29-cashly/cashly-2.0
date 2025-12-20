@@ -88,13 +88,18 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('ReminderForm: handleSubmit called');
 
     if (!validateForm()) {
+      console.log('ReminderForm: Form validation failed');
       return;
     }
 
+    console.log('ReminderForm: Form validation passed, submitting...');
+
     try {
       if (reminder) {
+        console.log('ReminderForm: Updating existing reminder');
         // Update existing reminder
         const updateData: UpdateReminderRequest = {
           title: formData.title.trim(),
@@ -107,10 +112,12 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
           duration_end: formData.duration_end || undefined,
         };
         const result = await updateReminder(reminder.id, updateData);
+        console.log('ReminderForm: Update result:', result);
         if (result) {
           onSuccess?.();
         }
       } else {
+        console.log('ReminderForm: Creating new reminder');
         // Create new reminder
         const createData: CreateReminderRequest = {
           title: formData.title.trim(),
@@ -122,8 +129,11 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
           recurrence_interval: formData.recurrence === 'custom' ? formData.recurrence_interval : undefined,
           duration_end: formData.duration_end || undefined,
         };
+        console.log('ReminderForm: Create data:', createData);
         const result = await createReminder(createData);
+        console.log('ReminderForm: Create result:', result);
         if (result) {
+          console.log('ReminderForm: Create successful, resetting form');
           setFormData({
             title: '',
             amount: 0,
@@ -135,10 +145,15 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
             duration_end: '',
           });
           onSuccess?.();
+        } else {
+          console.log('ReminderForm: Create failed, result is null');
         }
+        // Note: If result is null (error case), the loading state is already handled by the context
+        // and the error toast is already shown, so we don't need to do anything else here
       }
     } catch (error) {
-      console.error('Error submitting reminder form:', error);
+      console.error('ReminderForm: Error submitting reminder form:', error);
+      // The context already handles the error and loading state, so we don't need to do anything else
     }
   };
 
@@ -206,7 +221,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
-              Amount ($)
+              Amount (₱)
             </label>
             <input
               type="number"

@@ -260,19 +260,28 @@ const DashboardContent: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       <div className="text-center">
                         <p className="text-2xl font-semibold text-green-600">
-                          ${trendsReport.summary.avg_income.toLocaleString()}
+                          {new Intl.NumberFormat('en-PH', {
+                            style: 'currency',
+                            currency: 'PHP'
+                          }).format(trendsReport.summary.avg_income)}
                         </p>
                         <p className="text-sm text-gray-500">Avg Income</p>
                       </div>
                       <div className="text-center">
                         <p className="text-2xl font-semibold text-red-600">
-                          ${trendsReport.summary.avg_expense.toLocaleString()}
+                          {new Intl.NumberFormat('en-PH', {
+                            style: 'currency',
+                            currency: 'PHP'
+                          }).format(trendsReport.summary.avg_expense)}
                         </p>
                         <p className="text-sm text-gray-500">Avg Expense</p>
                       </div>
                       <div className="text-center">
                         <p className={`text-2xl font-semibold ${trendsReport.summary.avg_net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          ${trendsReport.summary.avg_net.toLocaleString()}
+                          {new Intl.NumberFormat('en-PH', {
+                            style: 'currency',
+                            currency: 'PHP'
+                          }).format(trendsReport.summary.avg_net)}
                         </p>
                         <p className="text-sm text-gray-500">Avg Net</p>
                       </div>

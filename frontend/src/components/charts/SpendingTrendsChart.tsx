@@ -60,7 +60,12 @@ const SpendingTrendsChart: React.FC<SpendingTrendsChartProps> = ({
         beginAtZero: true,
         ticks: {
           callback: function(value: any) {
-            return '$' + value.toLocaleString();
+            return new Intl.NumberFormat('en-PH', {
+              style: 'currency',
+              currency: 'PHP',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0
+            }).format(value);
           }
         }
       }
