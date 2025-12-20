@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import Layout from '@/components/Layout';
 import { useCategory } from '@/contexts/CategoryContext';
 import { Category } from '@/types';
 import CategoryCard from '@/components/CategoryCard';
@@ -51,9 +52,8 @@ const CategoriesPage: React.FC = () => {
         <meta name="description" content="Manage your transaction categories" />
       </Head>
       
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
+      <Layout currentPage="Categories">
+        <div className="px-4 py-6 sm:px-0">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <div>
@@ -207,19 +207,18 @@ const CategoriesPage: React.FC = () => {
                 ))}
               </div>
             )}
-          </div>
         </div>
-      </div>
 
-      {/* Create/Edit Form Modal */}
-      {(showForm || editingCategory) && (
-        <CategoryForm
-          category={editingCategory || undefined}
-          onSubmit={editingCategory ? handleUpdateCategory : handleCreateCategory}
-          onCancel={handleCancelForm}
-          loading={loading}
-        />
-      )}
+        {/* Create/Edit Form Modal */}
+        {(showForm || editingCategory) && (
+          <CategoryForm
+            category={editingCategory || undefined}
+            onSubmit={editingCategory ? handleUpdateCategory : handleCreateCategory}
+            onCancel={handleCancelForm}
+            loading={loading}
+          />
+        )}
+      </Layout>
     </ProtectedRoute>
   );
 };

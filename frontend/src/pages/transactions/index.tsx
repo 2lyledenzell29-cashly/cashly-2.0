@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import Layout from '@/components/Layout';
 import { useTransaction } from '@/contexts/TransactionContext';
 import { Transaction } from '@/types';
 import { TransactionFilters } from '@/utils/transactionApi';
@@ -90,9 +91,8 @@ const TransactionsPage: React.FC = () => {
         <meta name="description" content="Manage your transactions" />
       </Head>
       
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
+      <Layout currentPage="Transactions">
+        <div className="px-4 py-6 sm:px-0">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <div>
@@ -258,19 +258,18 @@ const TransactionsPage: React.FC = () => {
                 </div>
               </div>
             )}
-          </div>
         </div>
-      </div>
 
-      {/* Create/Edit Form Modal */}
-      {(showForm || editingTransaction) && (
-        <TransactionForm
-          transaction={editingTransaction || undefined}
-          onSubmit={editingTransaction ? handleUpdateTransaction : handleCreateTransaction}
-          onCancel={handleCancelForm}
-          loading={loading}
-        />
-      )}
+        {/* Create/Edit Form Modal */}
+        {(showForm || editingTransaction) && (
+          <TransactionForm
+            transaction={editingTransaction || undefined}
+            onSubmit={editingTransaction ? handleUpdateTransaction : handleCreateTransaction}
+            onCancel={handleCancelForm}
+            loading={loading}
+          />
+        )}
+      </Layout>
     </ProtectedRoute>
   );
 };

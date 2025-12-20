@@ -209,10 +209,10 @@ export interface TransactionQueryParams {
 }
 
 export interface TransactionSummary {
-  income: number;
-  expense: number;
+  totalIncome: number;
+  totalExpense: number;
   balance: number;
-  total_transactions: number;
+  transactionCount: number;
 }
 
 // Budget management request types

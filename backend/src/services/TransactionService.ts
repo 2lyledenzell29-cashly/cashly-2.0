@@ -212,10 +212,10 @@ export class TransactionService {
     );
 
     return {
-      income: summary.income,
-      expense: summary.expense,
+      totalIncome: summary.income,
+      totalExpense: summary.expense,
       balance: summary.income - summary.expense,
-      total_transactions: total
+      transactionCount: total
     };
   }
 

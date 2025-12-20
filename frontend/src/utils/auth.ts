@@ -19,6 +19,9 @@ export class AuthService {
   static setToken(token: string): void {
     if (typeof window === 'undefined') return;
     localStorage.setItem(this.TOKEN_KEY, token);
+
+    // Also set as httpOnly cookie for middleware
+    document.cookie = `${this.TOKEN_KEY}=${token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Strict`;
   }
 
   static getRefreshToken(): string | null {
@@ -29,12 +32,19 @@ export class AuthService {
   static setRefreshToken(token: string): void {
     if (typeof window === 'undefined') return;
     localStorage.setItem(this.REFRESH_TOKEN_KEY, token);
+
+    // Also set as httpOnly cookie for middleware
+    document.cookie = `${this.REFRESH_TOKEN_KEY}=${token}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Strict`;
   }
 
   static clearTokens(): void {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+
+    // Also clear cookies
+    document.cookie = `${this.TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    document.cookie = `${this.REFRESH_TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
   }
 
   static isAuthenticated(): boolean {
@@ -117,23 +127,23 @@ export class AuthService {
 // Password validation utility
 export const validatePassword = (password: string): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
-  
+
   if (password.length < 8) {
     errors.push('Password must be at least 8 characters long');
   }
-  
+
   if (!/[A-Z]/.test(password)) {
     errors.push('Password must contain at least one uppercase letter');
   }
-  
+
   if (!/[a-z]/.test(password)) {
     errors.push('Password must contain at least one lowercase letter');
   }
-  
+
   if (!/\d/.test(password)) {
     errors.push('Password must contain at least one number');
   }
-  
+
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
     errors.push('Password must contain at least one special character');
   }
@@ -151,14 +161,14 @@ export const getPasswordStrength = (password: string): {
   color: string;
 } => {
   let score = 0;
-  
+
   if (password.length >= 8) score += 1;
   if (password.length >= 12) score += 1;
   if (/[A-Z]/.test(password)) score += 1;
   if (/[a-z]/.test(password)) score += 1;
   if (/\d/.test(password)) score += 1;
   if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score += 1;
-  
+
   if (score <= 2) {
     return { score, label: 'Weak', color: 'text-red-600' };
   } else if (score <= 4) {

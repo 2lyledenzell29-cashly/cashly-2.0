@@ -1,6 +1,7 @@
 import { ApiResponse } from '@/types';
+import { AuthService } from './auth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 // Dashboard Summary Types
 export interface DashboardSummary {
@@ -103,8 +104,8 @@ export interface ExportRequest {
 export const dashboardApi = {
   // Get dashboard summary
   async getSummary(): Promise<DashboardSummary> {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/api/dashboard/summary`, {
+    const token = AuthService.getToken();
+    const response = await fetch(`${API_BASE_URL}/dashboard/summary`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ export const dashboardApi = {
 
   // Get transaction report
   async getTransactionReport(filters: TransactionReportFilters = {}): Promise<TransactionReport> {
-    const token = localStorage.getItem('token');
+    const token = AuthService.getToken();
     const queryParams = new URLSearchParams();
     
     Object.entries(filters).forEach(([key, value]) => {
@@ -131,7 +132,7 @@ export const dashboardApi = {
       }
     });
 
-    const response = await fetch(`${API_BASE_URL}/api/dashboard/reports/transactions?${queryParams}`, {
+    const response = await fetch(`${API_BASE_URL}/dashboard/reports/transactions?${queryParams}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -154,7 +155,7 @@ export const dashboardApi = {
     start_date?: string;
     end_date?: string;
   } = {}): Promise<CategoryBreakdown> {
-    const token = localStorage.getItem('token');
+    const token = AuthService.getToken();
     const queryParams = new URLSearchParams();
     
     Object.entries(filters).forEach(([key, value]) => {
@@ -163,7 +164,7 @@ export const dashboardApi = {
       }
     });
 
-    const response = await fetch(`${API_BASE_URL}/api/dashboard/reports/category-breakdown?${queryParams}`, {
+    const response = await fetch(`${API_BASE_URL}/dashboard/reports/category-breakdown?${queryParams}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -185,7 +186,7 @@ export const dashboardApi = {
     period?: 'monthly' | 'weekly';
     months?: number;
   } = {}): Promise<TrendsReport> {
-    const token = localStorage.getItem('token');
+    const token = AuthService.getToken();
     const queryParams = new URLSearchParams();
     
     Object.entries(filters).forEach(([key, value]) => {
@@ -194,7 +195,7 @@ export const dashboardApi = {
       }
     });
 
-    const response = await fetch(`${API_BASE_URL}/api/dashboard/reports/trends?${queryParams}`, {
+    const response = await fetch(`${API_BASE_URL}/dashboard/reports/trends?${queryParams}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -216,7 +217,7 @@ export const dashboardApi = {
     period?: 'monthly' | 'weekly';
     months?: number;
   } = {}): Promise<ChartData> {
-    const token = localStorage.getItem('token');
+    const token = AuthService.getToken();
     const queryParams = new URLSearchParams();
     queryParams.append('chart_type', chartType);
     
@@ -226,7 +227,7 @@ export const dashboardApi = {
       }
     });
 
-    const response = await fetch(`${API_BASE_URL}/api/dashboard/charts?${queryParams}`, {
+    const response = await fetch(`${API_BASE_URL}/dashboard/charts?${queryParams}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -244,8 +245,8 @@ export const dashboardApi = {
 
   // Export transactions
   async exportTransactions(exportRequest: ExportRequest): Promise<Blob> {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/api/dashboard/export/transactions`, {
+    const token = AuthService.getToken();
+    const response = await fetch(`${API_BASE_URL}/dashboard/export/transactions`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -264,8 +265,8 @@ export const dashboardApi = {
 
   // Export category breakdown
   async exportCategoryBreakdown(exportRequest: Omit<ExportRequest, 'format'> & { filename?: string }): Promise<Blob> {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/api/dashboard/export/category-breakdown`, {
+    const token = AuthService.getToken();
+    const response = await fetch(`${API_BASE_URL}/dashboard/export/category-breakdown`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -289,8 +290,8 @@ export const dashboardApi = {
     months?: number;
     filename?: string;
   }): Promise<Blob> {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/api/dashboard/export/trends`, {
+    const token = AuthService.getToken();
+    const response = await fetch(`${API_BASE_URL}/dashboard/export/trends`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import Navigation from '@/components/Navigation';
+import Layout from '@/components/Layout';
 import { useFamilyWallet } from '@/contexts/FamilyWalletContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Wallet } from '@/types';
@@ -59,10 +59,8 @@ const FamilyWalletsPage: React.FC = () => {
         <meta name="description" content="Manage your family wallets and invitations" />
       </Head>
       
-      <div className="min-h-screen bg-gray-50">
-        <Navigation currentPage="Family Wallets" />
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
+      <Layout currentPage="Family Wallets">
+        <div className="px-4 py-6 sm:px-0">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <div>
@@ -247,26 +245,25 @@ const FamilyWalletsPage: React.FC = () => {
                 )}
               </div>
             </div>
-          </div>
         </div>
-      </div>
 
-      {/* Create Family Wallet Form Modal */}
-      {showCreateForm && (
-        <FamilyWalletForm
-          onSubmit={handleCreateWallet}
-          onCancel={() => setShowCreateForm(false)}
-          loading={loading}
-        />
-      )}
+        {/* Create Family Wallet Form Modal */}
+        {showCreateForm && (
+          <FamilyWalletForm
+            onSubmit={handleCreateWallet}
+            onCancel={() => setShowCreateForm(false)}
+            loading={loading}
+          />
+        )}
 
-      {/* Family Wallet Members Modal */}
-      {selectedWallet && (
-        <FamilyWalletMembers
-          wallet={selectedWallet}
-          onClose={() => setSelectedWallet(null)}
-        />
-      )}
+        {/* Family Wallet Members Modal */}
+        {selectedWallet && (
+          <FamilyWalletMembers
+            wallet={selectedWallet}
+            onClose={() => setSelectedWallet(null)}
+          />
+        )}
+      </Layout>
     </ProtectedRoute>
   );
 };

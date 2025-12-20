@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import Navigation from '@/components/Navigation';
+import Layout from '@/components/Layout';
 import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
 import SummaryCards from '@/components/dashboard/SummaryCards';
 import ReportFilters from '@/components/dashboard/ReportFilters';
@@ -30,7 +30,6 @@ const DashboardContent: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'overview' | 'transactions' | 'categories' | 'trends'>('overview');
   const [reportFilters, setReportFilters] = useState<any>({});
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     // Load initial data
@@ -42,7 +41,6 @@ const DashboardContent: React.FC = () => {
 
   const handleFilterChange = (filters: any) => {
     setReportFilters(filters);
-    setCurrentPage(1);
     
     if (activeTab === 'transactions') {
       fetchTransactionReport({ ...filters, page: 1, limit: 10 });
@@ -54,13 +52,11 @@ const DashboardContent: React.FC = () => {
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
     fetchTransactionReport({ ...reportFilters, page, limit: 10 });
   };
 
   const handleTabChange = (tab: 'overview' | 'transactions' | 'categories' | 'trends') => {
     setActiveTab(tab);
-    setCurrentPage(1);
     
     // Load data for the selected tab if not already loaded
     if (tab === 'transactions' && !transactionReport) {
@@ -98,11 +94,8 @@ const DashboardContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation currentPage="Dashboard" />
-      
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
+    <Layout currentPage="Dashboard">
+      <div className="px-4 py-6 sm:px-0">
           {/* Page Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -296,8 +289,7 @@ const DashboardContent: React.FC = () => {
             </div>
           )}
         </div>
-      </main>
-    </div>
+    </Layout>
   );
 };
 

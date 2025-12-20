@@ -9,9 +9,9 @@ interface TransactionListProps {
 }
 
 const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
-  const { transactions, deleteTransaction, loading } = useTransaction();
-  const { wallets } = useWallet();
-  const { categories } = useCategory();
+  const { transactions = [], deleteTransaction, loading } = useTransaction();
+  const { wallets = [] } = useWallet();
+  const { categories = [] } = useCategory();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   const getWalletName = (walletId: string) => {
@@ -47,7 +47,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
     return type === 'Income' ? 'text-green-600' : 'text-red-600';
   };
 
-  if (loading && transactions.length === 0) {
+  if (loading && (!transactions || transactions.length === 0)) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -55,7 +55,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
     );
   }
 
-  if (transactions.length === 0) {
+  if (!transactions || transactions.length === 0) {
     return (
       <div className="text-center py-12">
         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
