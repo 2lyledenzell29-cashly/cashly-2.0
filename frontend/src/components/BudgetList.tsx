@@ -71,9 +71,9 @@ export const BudgetList: React.FC<BudgetListProps> = ({
   return (
     <div className="space-y-6">
       {/* Header and Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
             {walletId ? `${getWalletName(walletId)} Budgets` : 'All Budgets'}
           </h2>
           <p className="text-gray-600 mt-1">
@@ -81,13 +81,13 @@ export const BudgetList: React.FC<BudgetListProps> = ({
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           {/* Wallet Filter (only show if not filtering by specific wallet) */}
           {!walletId && wallets.length > 1 && (
             <select
               value={selectedWallet}
               onChange={handleWalletFilterChange}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm"
             >
               <option value="all">All Wallets</option>
               {wallets.map((wallet) => (
@@ -102,7 +102,7 @@ export const BudgetList: React.FC<BudgetListProps> = ({
           {showCreateButton && (
             <button
               onClick={onCreateClick}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              className="bg-blue-600 text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors w-full sm:w-auto"
             >
               Create Budget
             </button>
@@ -112,7 +112,7 @@ export const BudgetList: React.FC<BudgetListProps> = ({
 
       {/* Budget Cards */}
       {sortedBudgets.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {sortedBudgets.map((budget) => (
             <BudgetCard
               key={budget.id}
@@ -138,9 +138,9 @@ export const BudgetList: React.FC<BudgetListProps> = ({
         </div>
       ) : (
         <div className="text-center py-12">
-          <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
             <svg
-              className="w-12 h-12 text-gray-400"
+              className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -154,7 +154,7 @@ export const BudgetList: React.FC<BudgetListProps> = ({
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No budgets found</h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 mb-6 px-4">
             {selectedWallet === 'all' 
               ? "You haven't created any budgets yet. Start by creating your first budget to track your spending."
               : `No budgets found for ${getWalletName(selectedWallet)}. Create a budget to start tracking spending for this wallet.`
@@ -163,7 +163,7 @@ export const BudgetList: React.FC<BudgetListProps> = ({
           {showCreateButton && (
             <button
               onClick={onCreateClick}
-              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
             >
               Create Your First Budget
             </button>

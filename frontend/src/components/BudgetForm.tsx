@@ -117,8 +117,8 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">
         {budget ? 'Edit Budget' : 'Create New Budget'}
       </h2>
 
@@ -129,7 +129,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
             Wallet
           </label>
           {budget ? (
-            <div className="p-3 bg-gray-50 border border-gray-200 rounded-md text-gray-900">
+            <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900">
               {getWalletName(budget.wallet_id)}
             </div>
           ) : (
@@ -138,7 +138,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
               name="wallet_id"
               value={formData.wallet_id}
               onChange={handleInputChange}
-              className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm ${
                 errors.wallet_id ? 'border-red-500' : 'border-gray-300'
               }`}
               required
@@ -162,7 +162,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
             Month
           </label>
           {budget ? (
-            <div className="p-3 bg-gray-50 border border-gray-200 rounded-md text-gray-900">
+            <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900">
               {new Date(budget.month + '-01').toLocaleDateString('en-US', { 
                 year: 'numeric', 
                 month: 'long' 
@@ -175,7 +175,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
               name="month"
               value={formData.month}
               onChange={handleInputChange}
-              className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm ${
                 errors.month ? 'border-red-500' : 'border-gray-300'
               }`}
               required
@@ -199,7 +199,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
             onChange={handleInputChange}
             min="0"
             step="0.01"
-            className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm ${
               errors.limit ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Enter budget limit"
@@ -211,11 +211,11 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
         </div>
 
         {/* Form Actions */}
-        <div className="flex gap-3 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 bg-blue-600 text-white py-3 sm:py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? 'Saving...' : budget ? 'Update Budget' : 'Create Budget'}
           </button>
@@ -224,7 +224,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+              className="flex-1 bg-gray-300 text-gray-700 py-3 sm:py-2 px-4 rounded-lg hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
             >
               Cancel
             </button>

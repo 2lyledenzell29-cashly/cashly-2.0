@@ -189,8 +189,8 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">
         {reminder ? 'Edit Reminder' : 'Create New Reminder'}
       </h2>
 
@@ -206,7 +206,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
             name="title"
             value={formData.title}
             onChange={handleInputChange}
-            className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm ${
               errors.title ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Enter reminder title"
@@ -218,7 +218,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
         </div>
 
         {/* Amount and Type */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
               Amount (₱)
@@ -231,7 +231,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
               onChange={handleInputChange}
               min="0"
               step="0.01"
-              className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm ${
                 errors.amount ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="0.00"
@@ -251,7 +251,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
               name="type"
               value={formData.type}
               onChange={handleInputChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm"
               required
             >
               <option value="Payment">Payment (Outgoing)</option>
@@ -271,7 +271,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
             name="due_date"
             value={formData.due_date}
             onChange={handleInputChange}
-            className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm ${
               errors.due_date ? 'border-red-500' : 'border-gray-300'
             }`}
             required
@@ -291,7 +291,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
             name="wallet_id"
             value={formData.wallet_id}
             onChange={handleInputChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm"
           >
             <option value="">No specific wallet</option>
             {wallets.map((wallet) => (
@@ -312,7 +312,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
             name="recurrence"
             value={formData.recurrence}
             onChange={handleInputChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm"
           >
             <option value="once">One-time</option>
             <option value="daily">Daily</option>
@@ -335,7 +335,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
               value={formData.recurrence_interval}
               onChange={handleInputChange}
               min="1"
-              className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm ${
                 errors.recurrence_interval ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Number of days"
@@ -358,7 +358,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
               name="duration_end"
               value={formData.duration_end}
               onChange={handleInputChange}
-              className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-sm ${
                 errors.duration_end ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -372,11 +372,11 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
         )}
 
         {/* Form Actions */}
-        <div className="flex gap-3 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 bg-blue-600 text-white py-3 sm:py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? 'Saving...' : reminder ? 'Update Reminder' : 'Create Reminder'}
           </button>
@@ -385,7 +385,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+              className="flex-1 bg-gray-300 text-gray-700 py-3 sm:py-2 px-4 rounded-lg hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
             >
               Cancel
             </button>
