@@ -110,7 +110,7 @@ const DashboardContent: React.FC = () => {
 
           {/* Tab Navigation */}
           <div className="mb-6">
-            <nav className="flex space-x-8">
+            <nav className="flex space-x-4 sm:space-x-8 overflow-x-auto">
               {[
                 { key: 'overview', label: 'Overview' },
                 { key: 'transactions', label: 'Transactions' },
@@ -120,7 +120,7 @@ const DashboardContent: React.FC = () => {
                 <button
                   key={tab.key}
                   onClick={() => handleTabChange(tab.key as any)}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  className={`py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
                     activeTab === tab.key
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -162,7 +162,7 @@ const DashboardContent: React.FC = () => {
 
           {activeTab === 'transactions' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <h2 className="text-xl font-semibold text-gray-900">Transaction Report</h2>
                 <ExportButtons 
                   reportType="transactions" 
@@ -192,7 +192,7 @@ const DashboardContent: React.FC = () => {
 
           {activeTab === 'categories' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <h2 className="text-xl font-semibold text-gray-900">Category Breakdown</h2>
                 <ExportButtons 
                   reportType="category-breakdown" 
@@ -228,7 +228,7 @@ const DashboardContent: React.FC = () => {
 
           {activeTab === 'trends' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <h2 className="text-xl font-semibold text-gray-900">Spending Trends</h2>
                 <ExportButtons 
                   reportType="trends" 
@@ -261,39 +261,39 @@ const DashboardContent: React.FC = () => {
                   
                   <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Summary Statistics</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="text-center">
-                        <p className="text-2xl font-semibold text-green-600">
+                        <p className="text-xl sm:text-2xl font-semibold text-green-600">
                           {new Intl.NumberFormat('en-PH', {
                             style: 'currency',
                             currency: 'PHP'
                           }).format(trendsReport.summary.avg_income)}
                         </p>
-                        <p className="text-sm text-gray-500">Avg Income</p>
+                        <p className="text-xs sm:text-sm text-gray-500">Avg Income</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-2xl font-semibold text-red-600">
+                        <p className="text-xl sm:text-2xl font-semibold text-red-600">
                           {new Intl.NumberFormat('en-PH', {
                             style: 'currency',
                             currency: 'PHP'
                           }).format(trendsReport.summary.avg_expense)}
                         </p>
-                        <p className="text-sm text-gray-500">Avg Expense</p>
+                        <p className="text-xs sm:text-sm text-gray-500">Avg Expense</p>
                       </div>
                       <div className="text-center">
-                        <p className={`text-2xl font-semibold ${trendsReport.summary.avg_net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`text-xl sm:text-2xl font-semibold ${trendsReport.summary.avg_net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                           {new Intl.NumberFormat('en-PH', {
                             style: 'currency',
                             currency: 'PHP'
                           }).format(trendsReport.summary.avg_net)}
                         </p>
-                        <p className="text-sm text-gray-500">Avg Net</p>
+                        <p className="text-xs sm:text-sm text-gray-500">Avg Net</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-2xl font-semibold text-gray-900">
+                        <p className="text-xl sm:text-2xl font-semibold text-gray-900">
                           {trendsReport.summary.total_periods}
                         </p>
-                        <p className="text-sm text-gray-500">Periods</p>
+                        <p className="text-xs sm:text-sm text-gray-500">Periods</p>
                       </div>
                     </div>
                   </div>

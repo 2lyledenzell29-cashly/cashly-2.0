@@ -44,9 +44,9 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
       {/* Total Balance */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -55,9 +55,9 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
               </svg>
             </div>
           </div>
-          <div className="ml-4">
+          <div className="ml-4 min-w-0 flex-1">
             <p className="text-sm font-medium text-gray-500">Total Balance</p>
-            <p className="text-2xl font-semibold text-gray-900">
+            <p className="text-lg sm:text-2xl font-semibold text-gray-900 truncate">
               {formatCurrency(summary.total_balance)}
             </p>
           </div>
@@ -65,7 +65,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
       </div>
 
       {/* Monthly Income */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -74,9 +74,9 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
               </svg>
             </div>
           </div>
-          <div className="ml-4">
+          <div className="ml-4 min-w-0 flex-1">
             <p className="text-sm font-medium text-gray-500">Monthly Income</p>
-            <p className="text-2xl font-semibold text-green-600">
+            <p className="text-lg sm:text-2xl font-semibold text-green-600 truncate">
               {formatCurrency(summary.monthly_income)}
             </p>
           </div>
@@ -84,7 +84,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
       </div>
 
       {/* Monthly Expenses */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
@@ -93,9 +93,9 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
               </svg>
             </div>
           </div>
-          <div className="ml-4">
+          <div className="ml-4 min-w-0 flex-1">
             <p className="text-sm font-medium text-gray-500">Monthly Expenses</p>
-            <p className="text-2xl font-semibold text-red-600">
+            <p className="text-lg sm:text-2xl font-semibold text-red-600 truncate">
               {formatCurrency(summary.monthly_expense)}
             </p>
           </div>
@@ -103,7 +103,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
       </div>
 
       {/* Budget Status */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getBudgetStatusColor(summary.budget_status.overall_status)}`}>
@@ -112,9 +112,9 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
               </svg>
             </div>
           </div>
-          <div className="ml-4">
+          <div className="ml-4 min-w-0 flex-1">
             <p className="text-sm font-medium text-gray-500">Budget Status</p>
-            <p className={`text-2xl font-semibold ${getBudgetStatusColor(summary.budget_status.overall_status).split(' ')[0]}`}>
+            <p className={`text-lg sm:text-2xl font-semibold ${getBudgetStatusColor(summary.budget_status.overall_status).split(' ')[0]} truncate`}>
               {getBudgetStatusText(summary.budget_status.overall_status)}
             </p>
             <p className="text-xs text-gray-500 mt-1">
@@ -125,7 +125,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
       </div>
 
       {/* Additional Stats Row */}
-      <div className="bg-white rounded-lg shadow p-6 md:col-span-2">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6 md:col-span-2">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Stats</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -140,9 +140,9 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
       </div>
 
       {/* Budget Breakdown */}
-      <div className="bg-white rounded-lg shadow p-6 md:col-span-2">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6 md:col-span-2">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Budget Breakdown</h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
             <span className="text-sm text-gray-600">On Track: {summary.budget_status.budgets_on_track}</span>
@@ -156,7 +156,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
             <span className="text-sm text-gray-600">Over Budget: {summary.budget_status.budgets_over}</span>
           </div>
           <div className="flex items-center">
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-sm font-medium text-gray-900 truncate">
               Net: {formatCurrency(summary.monthly_income - summary.monthly_expense)}
             </span>
           </div>

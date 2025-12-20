@@ -181,29 +181,29 @@ export const ReminderCard: React.FC<ReminderCardProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 border border-gray-200">
       {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-lg font-semibold text-gray-900 truncate">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
               {reminder.title}
             </h3>
             {getStatusBadge()}
           </div>
-          <p className="text-sm text-gray-600">{getWalletName()}</p>
+          <p className="text-sm text-gray-600 truncate">{getWalletName()}</p>
         </div>
         
-        <div className="flex gap-2 ml-4">
+        <div className="flex gap-2 sm:ml-4 self-end sm:self-start">
           <button
             onClick={handleEdit}
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium px-3 py-1 rounded-md hover:bg-blue-50"
           >
             Edit
           </button>
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="text-red-600 hover:text-red-800 text-sm font-medium"
+            className="text-red-600 hover:text-red-800 text-sm font-medium px-3 py-1 rounded-md hover:bg-red-50"
           >
             Delete
           </button>
@@ -211,18 +211,18 @@ export const ReminderCard: React.FC<ReminderCardProps> = ({
       </div>
 
       {/* Amount and Type */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
         <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(reminder.type)}`}>
           <span className="mr-1">{getTypeIcon(reminder.type)}</span>
           {reminder.type}
         </div>
-        <span className="text-xl font-bold text-gray-900">
+        <span className="text-lg sm:text-xl font-bold text-gray-900">
           {formatCurrency(reminder.amount)}
         </span>
       </div>
 
       {/* Due Date */}
-      <div className="mb-4">
+      <div className="mb-3">
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-600">Due Date</span>
           <span className={`text-sm font-medium ${
@@ -276,25 +276,25 @@ export const ReminderCard: React.FC<ReminderCardProps> = ({
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Delete Reminder
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-6 text-sm">
               Are you sure you want to delete the reminder "{reminder.title}"? 
               This action cannot be undone.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={handleDelete}
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
+                className="flex-1 bg-red-600 text-white py-3 sm:py-2 px-4 rounded-md hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors order-2 sm:order-1"
               >
                 Delete
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                className="flex-1 bg-gray-300 text-gray-700 py-3 sm:py-2 px-4 rounded-md hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors order-1 sm:order-2"
               >
                 Cancel
               </button>

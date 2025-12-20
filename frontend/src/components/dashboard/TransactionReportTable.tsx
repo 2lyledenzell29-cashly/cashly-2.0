@@ -45,40 +45,40 @@ const TransactionReportTable: React.FC<TransactionReportTableProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white rounded-lg shadow overflow-hidden">
       {/* Summary */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Transaction Report</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+      <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+        <h3 className="text-lg font-medium text-gray-900 mb-3">Transaction Report</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm">
           <div>
-            <span className="text-gray-500">Total Income:</span>
-            <span className="ml-2 font-medium text-green-600">
+            <span className="text-gray-500 block mb-1">Total Income:</span>
+            <span className="font-medium text-green-600 text-base">
               {formatCurrency(report.summary.total_income)}
             </span>
           </div>
           <div>
-            <span className="text-gray-500">Total Expense:</span>
-            <span className="ml-2 font-medium text-red-600">
+            <span className="text-gray-500 block mb-1">Total Expense:</span>
+            <span className="font-medium text-red-600 text-base">
               {formatCurrency(report.summary.total_expense)}
             </span>
           </div>
           <div>
-            <span className="text-gray-500">Net Amount:</span>
-            <span className={`ml-2 font-medium ${report.summary.net_amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <span className="text-gray-500 block mb-1">Net Amount:</span>
+            <span className={`font-medium text-base ${report.summary.net_amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {formatCurrency(report.summary.net_amount)}
             </span>
           </div>
           <div>
-            <span className="text-gray-500">Total Transactions:</span>
-            <span className="ml-2 font-medium text-gray-900">
+            <span className="text-gray-500 block mb-1">Total Transactions:</span>
+            <span className="font-medium text-gray-900 text-base">
               {report.summary.transaction_count}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Table - Desktop */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -135,42 +135,86 @@ const TransactionReportTable: React.FC<TransactionReportTableProps> = ({
         </table>
       </div>
 
+      {/* Mobile Card View */}
+      <div className="md:hidden divide-y divide-gray-200">
+        {report.transactions.length === 0 ? (
+          <div className="px-4 py-8 text-center text-gray-500">
+            No transactions found
+          </div>
+        ) : (
+          report.transactions.map((transaction: any) => (
+            <div key={transaction.id} className="px-4 py-4">
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {transaction.title}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {formatDate(transaction.created_at)}
+                  </p>
+                </div>
+                <span className={`ml-2 text-base font-medium ${getTypeColor(transaction.type)} whitespace-nowrap`}>
+                  {formatCurrency(transaction.amount)}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                  transaction.type === 'Income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}>
+                  {transaction.type}
+                </span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-800">
+                  {transaction.category_name || 'Uncategorized'}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {/* Pagination */}
       {report.pagination.total_pages > 1 && (
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-          <div className="text-sm text-gray-500">
-            Showing {((report.pagination.page - 1) * report.pagination.limit) + 1} to{' '}
-            {Math.min(report.pagination.page * report.pagination.limit, report.pagination.total)} of{' '}
-            {report.pagination.total} results
-          </div>
-          <div className="flex space-x-1">
-            <button
-              onClick={() => onPageChange(report.pagination.page - 1)}
-              disabled={report.pagination.page === 1}
-              className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            {generatePageNumbers().map((pageNum) => (
+        <div className="px-4 sm:px-6 py-4 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="text-sm text-gray-500 text-center sm:text-left">
+              Showing {((report.pagination.page - 1) * report.pagination.limit) + 1} to{' '}
+              {Math.min(report.pagination.page * report.pagination.limit, report.pagination.total)} of{' '}
+              {report.pagination.total} results
+            </div>
+            <div className="flex justify-center space-x-1">
               <button
-                key={pageNum}
-                onClick={() => onPageChange(pageNum)}
-                className={`px-3 py-1 text-sm border rounded-md ${
-                  pageNum === report.pagination.page
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'border-gray-300 hover:bg-gray-50'
-                }`}
+                onClick={() => onPageChange(report.pagination.page - 1)}
+                disabled={report.pagination.page === 1}
+                className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {pageNum}
+                Previous
               </button>
-            ))}
-            <button
-              onClick={() => onPageChange(report.pagination.page + 1)}
-              disabled={report.pagination.page === report.pagination.total_pages}
-              className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
+              <div className="hidden sm:flex space-x-1">
+                {generatePageNumbers().map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => onPageChange(pageNum)}
+                    className={`px-3 py-1 text-sm border rounded-md ${
+                      pageNum === report.pagination.page
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+              </div>
+              <div className="sm:hidden px-3 py-1 text-sm">
+                {report.pagination.page} / {report.pagination.total_pages}
+              </div>
+              <button
+                onClick={() => onPageChange(report.pagination.page + 1)}
+                disabled={report.pagination.page === report.pagination.total_pages}
+                className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       )}

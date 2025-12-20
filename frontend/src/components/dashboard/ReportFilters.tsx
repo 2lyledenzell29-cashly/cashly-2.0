@@ -83,9 +83,9 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 mb-6">
+    <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6">
       <h3 className="text-lg font-medium text-gray-900 mb-4">Filters</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Wallet Filter */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -94,7 +94,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
           <select
             value={filters.wallet_id}
             onChange={(e) => handleFilterChange('wallet_id', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           >
             <option value="">All Wallets</option>
             {wallets.map((wallet) => (
@@ -114,7 +114,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
             <select
               value={filters.category_id}
               onChange={(e) => handleFilterChange('category_id', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             >
               <option value="">All Categories</option>
               {categories.map((category) => (
@@ -135,7 +135,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
             <select
               value={filters.type}
               onChange={(e) => handleFilterChange('type', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             >
               <option value="">All Types</option>
               <option value="Income">Income</option>
@@ -153,7 +153,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
             type="date"
             value={filters.start_date}
             onChange={(e) => handleFilterChange('start_date', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
         </div>
 
@@ -166,7 +166,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
             type="date"
             value={filters.end_date}
             onChange={(e) => handleFilterChange('end_date', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
         </div>
 
@@ -174,7 +174,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
         <div className="flex items-end">
           <button
             onClick={handleReset}
-            className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
           >
             Reset Filters
           </button>
