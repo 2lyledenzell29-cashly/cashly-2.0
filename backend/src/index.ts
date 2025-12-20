@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { checkDatabaseConnection, getDatabaseInfo } from './utils/neon';
 import routes from './routes';
+import job from './config/cron';
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,10 @@ app.use(express.urlencoded({ extended: true }));
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
 });
 
 // API routes
@@ -60,6 +65,12 @@ if (require.main === module) {
   app.listen(PORT, async () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    
+    // Start cron job in production
+    if (process.env.NODE_ENV === "production") {
+      job.start();
+      console.log('⏰ Cron job started - sending health checks every 14 minutes');
+    }
     
     // Check database connection
     const isConnected = await checkDatabaseConnection();
