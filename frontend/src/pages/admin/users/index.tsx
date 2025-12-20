@@ -124,9 +124,9 @@ const AdminUsersPage: React.FC = () => {
       <Layout currentPage="User Management">
         <div className="px-4 py-6 sm:px-0">
           {/* Header */}
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">User Management</h1>
               <p className="mt-1 text-sm text-gray-600">
                 Manage user accounts and permissions
               </p>
@@ -134,7 +134,7 @@ const AdminUsersPage: React.FC = () => {
             
             <button
               onClick={() => setShowCreateForm(true)}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -143,13 +143,14 @@ const AdminUsersPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Users Table */}
+          {/* Users List */}
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-200">
               {users.map((userItem) => (
-                <li key={userItem.id}>
-                  <div className="px-4 py-4 flex items-center justify-between">
-                    <div className="flex items-center">
+                <div key={userItem.id} className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                    {/* User Info */}
+                    <div className="flex items-start sm:items-center space-x-3">
                       <div className="flex-shrink-0">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                           userItem.role === 'admin' ? 'bg-red-100' : 'bg-blue-100'
@@ -161,10 +162,11 @@ const AdminUsersPage: React.FC = () => {
                           </span>
                         </div>
                       </div>
-                      <div className="ml-4">
-                        <div className="flex items-center">
-                          <p className="text-sm font-medium text-gray-900">{userItem.username}</p>
-                          <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                          <p className="text-sm font-medium text-gray-900 truncate">{userItem.username}</p>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium w-fit ${
                             userItem.role === 'admin' 
                               ? 'bg-red-100 text-red-800' 
                               : 'bg-green-100 text-green-800'
@@ -172,20 +174,24 @@ const AdminUsersPage: React.FC = () => {
                             {userItem.role}
                           </span>
                         </div>
-                        <div className="mt-1 flex items-center text-sm text-gray-500">
-                          <span>{userItem.email}</span>
-                          <span className="mx-2">•</span>
-                          <span>Wallet limit: {userItem.wallet_limit}</span>
-                          <span className="mx-2">•</span>
-                          <span>Created: {new Date(userItem.created_at).toLocaleDateString()}</span>
+                        
+                        <div className="mt-1 space-y-1 sm:space-y-0">
+                          <p className="text-sm text-gray-500 truncate">{userItem.email}</p>
+                          <div className="flex flex-col sm:flex-row sm:items-center text-xs text-gray-400 space-y-1 sm:space-y-0 sm:space-x-4">
+                            <span>Wallet limit: {userItem.wallet_limit}</span>
+                            <span className="hidden sm:inline">•</span>
+                            <span>Created: {new Date(userItem.created_at).toLocaleDateString()}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-2">
+                    {/* Action Buttons */}
+                    <div className="flex items-center justify-end space-x-1 sm:space-x-2">
                       <button
                         onClick={() => setEditingUser(userItem)}
-                        className="text-gray-400 hover:text-gray-600"
+                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+                        title="Edit User"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -194,7 +200,7 @@ const AdminUsersPage: React.FC = () => {
 
                       <button
                         onClick={() => handleResetPassword(userItem.id)}
-                        className="text-gray-400 hover:text-yellow-600"
+                        className="p-2 text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 rounded-md transition-colors"
                         title="Reset Password"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,7 +211,8 @@ const AdminUsersPage: React.FC = () => {
                       {userItem.id !== user?.id && (
                         <button
                           onClick={() => setDeleteConfirm(userItem.id)}
-                          className="text-gray-400 hover:text-red-600"
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                          title="Delete User"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -214,9 +221,9 @@ const AdminUsersPage: React.FC = () => {
                       )}
                     </div>
                   </div>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
           {users.length === 0 && (
@@ -249,8 +256,8 @@ const AdminUsersPage: React.FC = () => {
 
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 p-4">
+            <div className="relative top-20 mx-auto p-5 border w-full max-w-sm shadow-lg rounded-md bg-white">
               <div className="mt-3 text-center">
                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
                   <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,21 +265,21 @@ const AdminUsersPage: React.FC = () => {
                   </svg>
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mt-2">Delete User</h3>
-                <div className="mt-2 px-7 py-3">
+                <div className="mt-2 px-4 py-3">
                   <p className="text-sm text-gray-500">
                     Are you sure you want to delete this user? This action cannot be undone.
                   </p>
                 </div>
-                <div className="items-center px-4 py-3">
+                <div className="flex flex-col sm:flex-row items-center justify-center px-4 py-3 space-y-2 sm:space-y-0 sm:space-x-2">
                   <button
                     onClick={() => handleDeleteUser(deleteConfirm)}
-                    className="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-red-600"
+                    className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md hover:bg-red-600"
                   >
                     Delete
                   </button>
                   <button
                     onClick={() => setDeleteConfirm(null)}
-                    className="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-24 hover:bg-gray-600"
+                    className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md hover:bg-gray-600"
                   >
                     Cancel
                   </button>
@@ -331,8 +338,8 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onSubmit, onCancel 
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 p-4">
+      <div className="relative top-4 sm:top-20 mx-auto p-4 sm:p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
         <div className="mt-3">
           <h3 className="text-lg font-medium text-gray-900 text-center">
             {user ? 'Edit User' : 'Create New User'}
@@ -345,7 +352,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onSubmit, onCancel 
                 type="text"
                 value={formData.username}
                 onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                 required
               />
             </div>
@@ -356,7 +363,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onSubmit, onCancel 
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                 required
               />
             </div>
@@ -368,7 +375,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onSubmit, onCancel 
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                   required
                 />
               </div>
@@ -379,7 +386,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onSubmit, onCancel 
               <select
                 value={formData.role}
                 onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value as 'user' | 'admin' }))}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
               >
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
@@ -393,23 +400,23 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onSubmit, onCancel 
                 min="1"
                 value={formData.wallet_limit}
                 onChange={(e) => setFormData(prev => ({ ...prev, wallet_limit: parseInt(e.target.value) }))}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                 required
               />
             </div>
 
-            <div className="flex justify-end space-x-3 pt-4">
+            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4">
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                className="w-full sm:w-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
               >
                 {loading ? '...' : user ? 'Update' : 'Create'}
               </button>
