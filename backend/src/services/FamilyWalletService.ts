@@ -3,7 +3,7 @@ import { FamilyWalletMemberRepository } from '../repositories/FamilyWalletMember
 import { InvitationRepository } from '../repositories/InvitationRepository';
 import { WalletRepository } from '../repositories/WalletRepository';
 import { UserRepository } from '../repositories/UserRepository';
-import { FamilyWalletMember, Invitation, Wallet, User } from '../types';
+import { FamilyWalletMember, Invitation, Wallet } from '../types';
 
 export class FamilyWalletService {
   private familyWalletMemberRepository: FamilyWalletMemberRepository;

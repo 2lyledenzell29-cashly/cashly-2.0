@@ -27,15 +27,15 @@ app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
+
     // Remove trailing slash from origin for comparison
     const normalizedOrigin = origin.replace(/\/$/, '');
     const normalizedAllowed = allowedOrigins.map(url => url.replace(/\/$/, ''));
-    
+
     if (normalizedAllowed.includes(normalizedOrigin)) {
       return callback(null, true);
     }
-    
+
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true
@@ -87,13 +87,13 @@ if (require.main === module) {
   app.listen(PORT, async () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-    
+
     // Start cron job in production
     if (process.env.NODE_ENV === "production") {
       job.start();
       console.log('⏰ Cron job started - sending health checks every 14 minutes');
     }
-    
+
     // Check database connection
     const isConnected = await checkDatabaseConnection();
     if (isConnected) {

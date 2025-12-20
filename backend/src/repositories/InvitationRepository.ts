@@ -43,11 +43,19 @@ export class InvitationRepository extends BaseRepository<Invitation> {
   }
 
   async acceptInvitation(id: string): Promise<Invitation | null> {
-    return this.update(id, { status: 'accepted' });
+    const [result] = await this.db(this.tableName)
+      .where({ id })
+      .update({ status: 'accepted' })
+      .returning('*');
+    return result || null;
   }
 
   async declineInvitation(id: string): Promise<Invitation | null> {
-    return this.update(id, { status: 'declined' });
+    const [result] = await this.db(this.tableName)
+      .where({ id })
+      .update({ status: 'declined' })
+      .returning('*');
+    return result || null;
   }
 
   async createInvitation(
