@@ -9,6 +9,16 @@ export interface User {
   updated_at: string;
 }
 
+export interface UserResponse {
+  id: string;
+  username: string;
+  email: string;
+  role: 'user' | 'admin';
+  wallet_limit: number;
+  created_at: string;
+  updated_at: string;
+}
+
 // Wallet types
 export interface Wallet {
   id: string;

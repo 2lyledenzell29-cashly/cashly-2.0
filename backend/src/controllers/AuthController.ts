@@ -1,12 +1,15 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/AuthService';
-import { RegisterRequest, LoginRequest, ApiResponse } from '../types';
+import { UserService } from '../services/UserService';
+import { RegisterRequest, LoginRequest, ApiResponse, UpdateUserRequest } from '../types';
 
 export class AuthController {
   private authService: AuthService;
+  private userService: UserService;
 
   constructor() {
     this.authService = new AuthService();
+    this.userService = new UserService();
   }
 
   register = async (req: Request, res: Response): Promise<void> => {
@@ -139,6 +142,126 @@ export class AuthController {
     }
   };
 
+  // PUT /api/auth/profile - Update user profile
+  updateProfile = async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!req.user) {
+        res.status(401).json({
+          success: false,
+          error: {
+            code: 'AUTH_TOKEN_MISSING',
+            message: 'Authentication required'
+          }
+        } as ApiResponse);
+        return;
+      }
+
+      const updateData: UpdateUserRequest = req.body;
+
+      // Validate email format if provided
+      if (updateData.email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(updateData.email)) {
+          res.status(400).json({
+            success: false,
+            error: {
+              code: 'VALIDATION_FAILED',
+              message: 'Invalid email format'
+            }
+          } as ApiResponse);
+          return;
+        }
+      }
+
+      // Validate username format if provided
+      if (updateData.username) {
+        const usernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
+        if (!usernameRegex.test(updateData.username)) {
+          res.status(400).json({
+            success: false,
+            error: {
+              code: 'VALIDATION_FAILED',
+              message: 'Username must be 3-30 characters long and contain only letters, numbers, and underscores'
+            }
+          } as ApiResponse);
+          return;
+        }
+      }
+
+      const updatedUser = await this.userService.updateUser(req.user.userId, updateData);
+
+      res.status(200).json({
+        success: true,
+        data: updatedUser
+      } as ApiResponse);
+    } catch (error) {
+      this.handleAuthError(error, res);
+    }
+  };
+
+  // PUT /api/auth/change-password - Change user password
+  changePassword = async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!req.user) {
+        res.status(401).json({
+          success: false,
+          error: {
+            code: 'AUTH_TOKEN_MISSING',
+            message: 'Authentication required'
+          }
+        } as ApiResponse);
+        return;
+      }
+
+      const { currentPassword, newPassword, confirmPassword } = req.body;
+
+      // Validate required fields
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'VALIDATION_FAILED',
+            message: 'Current password, new password, and confirmation are required'
+          }
+        } as ApiResponse);
+        return;
+      }
+
+      // Validate password confirmation
+      if (newPassword !== confirmPassword) {
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'VALIDATION_PASSWORD_MISMATCH',
+            message: 'New password confirmation does not match'
+          }
+        } as ApiResponse);
+        return;
+      }
+
+      // Validate new password strength
+      if (newPassword.length < 8) {
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'VALIDATION_PASSWORD_WEAK',
+            message: 'New password must be at least 8 characters long'
+          }
+        } as ApiResponse);
+        return;
+      }
+
+      await this.authService.changePassword(req.user.userId, currentPassword, newPassword);
+
+      res.status(200).json({
+        success: true,
+        data: { message: 'Password changed successfully' }
+      } as ApiResponse);
+    } catch (error) {
+      this.handleAuthError(error, res);
+    }
+  };
+
   private handleAuthError(error: any, res: Response): void {
     const errorMessage = error.message || 'INTERNAL_SERVER_ERROR';
 
@@ -229,6 +352,16 @@ export class AuthController {
           error: {
             code: 'USER_NOT_FOUND',
             message: 'User not found'
+          }
+        } as ApiResponse);
+        break;
+
+      case 'AUTH_INVALID_CURRENT_PASSWORD':
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'AUTH_INVALID_CURRENT_PASSWORD',
+            message: 'Current password is incorrect'
           }
         } as ApiResponse);
         break;

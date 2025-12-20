@@ -10,7 +10,7 @@ export class UserController {
     }
 
     // GET /api/admin/users - Get all users
-    async getAllUsers(req: Request, res: Response): Promise<void> {
+    getAllUsers = async (req: Request, res: Response): Promise<void> => {
         try {
             const users = await this.userService.getAllUsers();
 
@@ -24,7 +24,7 @@ export class UserController {
     }
 
     // GET /api/admin/users/:id - Get user by ID
-    async getUserById(req: Request, res: Response): Promise<void> {
+    getUserById = async (req: Request, res: Response): Promise<void> => {
         try {
             const { id } = req.params;
             const user = await this.userService.getUserById(id);
@@ -50,7 +50,7 @@ export class UserController {
     }
 
     // POST /api/admin/users - Create new user
-    async createUser(req: Request, res: Response): Promise<void> {
+    createUser = async (req: Request, res: Response): Promise<void> => {
         try {
             const userData: CreateUserRequest = req.body;
 
@@ -103,7 +103,7 @@ export class UserController {
     }
 
     // PUT /api/admin/users/:id - Update user
-    async updateUser(req: Request, res: Response): Promise<void> {
+    updateUser = async (req: Request, res: Response): Promise<void> => {
         try {
             const { id } = req.params;
             const userData: UpdateUserRequest = req.body;
@@ -158,7 +158,7 @@ export class UserController {
     }
 
     // PUT /api/admin/users/:id/password - Reset user password
-    async resetPassword(req: Request, res: Response): Promise<void> {
+    resetPassword = async (req: Request, res: Response): Promise<void> => {
         try {
             const { id } = req.params;
             const { password }: ResetPasswordRequest = req.body;
@@ -209,7 +209,7 @@ export class UserController {
     }
 
     // PUT /api/admin/users/:id/wallet-limit - Update user wallet limit
-    async updateWalletLimit(req: Request, res: Response): Promise<void> {
+    updateWalletLimit = async (req: Request, res: Response): Promise<void> => {
         try {
             const { id } = req.params;
             const { walletLimit } = req.body;
@@ -259,7 +259,7 @@ export class UserController {
     }
 
     // DELETE /api/admin/users/:id - Delete user
-    async deleteUser(req: Request, res: Response): Promise<void> {
+    deleteUser = async (req: Request, res: Response): Promise<void> => {
         try {
             const { id } = req.params;
             const currentUserId = req.user?.userId;

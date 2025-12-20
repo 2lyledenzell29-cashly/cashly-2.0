@@ -77,6 +77,21 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
     },
   ];
 
+  // Add admin-only navigation items
+  const adminNavItems = user?.role === 'admin' ? [
+    { 
+      name: 'User Management', 
+      path: '/admin/users',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+        </svg>
+      )
+    },
+  ] : [];
+
+  const allNavItems = [...navItems, ...adminNavItems];
+
   const handleNavigation = (path: string) => {
     router.push(path);
     setSidebarOpen(false); // Close sidebar on mobile after navigation
@@ -110,7 +125,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
 
         <nav className="mt-5 px-2">
           <div className="space-y-1">
-            {navItems.map((item) => {
+            {allNavItems.map((item) => {
               const isActive = currentPage === item.name || router.pathname === item.path;
               return (
                 <button
@@ -146,12 +161,21 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
               <p className="text-sm font-medium text-gray-700 truncate">
                 {user?.username}
               </p>
-              <button
-                onClick={logout}
-                className="text-xs text-gray-500 hover:text-gray-700"
-              >
-                Sign out
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleNavigation('/profile')}
+                  className="text-xs text-gray-500 hover:text-gray-700"
+                >
+                  Profile
+                </button>
+                <span className="text-gray-300">•</span>
+                <button
+                  onClick={logout}
+                  className="text-xs text-gray-500 hover:text-gray-700"
+                >
+                  Sign out
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -169,6 +169,32 @@ export class AuthService {
     };
   }
 
+  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+    // Get user
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new Error('USER_NOT_FOUND');
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!isCurrentPasswordValid) {
+      throw new Error('AUTH_INVALID_CURRENT_PASSWORD');
+    }
+
+    // Validate new password strength
+    this.validatePasswordStrength(newPassword);
+
+    // Hash new password
+    const newPasswordHash = await bcrypt.hash(newPassword, this.saltRounds);
+
+    // Update password
+    await this.userRepository.update(userId, {
+      password_hash: newPasswordHash,
+      updated_at: new Date()
+    });
+  }
+
   private validatePasswordStrength(password: string): void {
     // Password must be at least 8 characters long
     if (password.length < 8) {
