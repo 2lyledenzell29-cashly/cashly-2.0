@@ -93,7 +93,7 @@ export class ReminderService {
       if (isNaN(durationEnd.getTime())) {
         throw new Error('VALIDATION_INVALID_DURATION_END');
       }
-      
+
       // Duration end should be after due date
       if (durationEnd <= dueDate) {
         throw new Error('VALIDATION_DURATION_END_BEFORE_DUE_DATE');
@@ -165,7 +165,7 @@ export class ReminderService {
         if (isNaN(durationEnd.getTime())) {
           throw new Error('VALIDATION_INVALID_DURATION_END');
         }
-        
+
         // Duration end should be after due date
         const checkDueDate = dueDate || existingReminder.due_date;
         if (durationEnd <= checkDueDate) {
@@ -239,7 +239,15 @@ export class ReminderService {
         nextDate.setDate(nextDate.getDate() + 7);
         break;
       case 'monthly':
+        // Handle monthly recurrence with day adjustment for months with fewer days
+        const originalDay = new Date(reminder.due_date).getDate(); // Always use the original due date day
+
+        // Move to next month
         nextDate.setMonth(nextDate.getMonth() + 1);
+
+        // Adjust the day for the target month (handles 31st -> 30th, 29th, 28th)
+        const adjustedDay = this.adjustDayForMonth(originalDay, nextDate.getFullYear(), nextDate.getMonth());
+        nextDate.setDate(adjustedDay);
         break;
       case 'custom':
         if (reminder.recurrence_interval) {
@@ -262,33 +270,51 @@ export class ReminderService {
 
   async getAllUpcomingOccurrences(reminder: Reminder, maxOccurrences: number = 10): Promise<Date[]> {
     const occurrences: Date[] = [];
-    let currentDate = new Date(reminder.due_date);
-    
-    // Add the initial due date if it's in the future
-    const now = new Date();
-    if (currentDate >= now) {
-      occurrences.push(new Date(currentDate));
+    const originalDueDate = new Date(reminder.due_date);
+
+    // For one-time reminders, just return the due date if it's in the future
+    if (reminder.recurrence === 'once') {
+      const now = new Date();
+      if (originalDueDate >= now) {
+        occurrences.push(new Date(originalDueDate));
+      }
+      return occurrences;
     }
 
-    // Generate future occurrences
-    for (let i = 0; i < maxOccurrences - 1; i++) {
-      const nextOccurrence = await this.getNextReminderOccurrence({
-        ...reminder,
-        due_date: currentDate
-      });
-      
-      if (!nextOccurrence) {
+    // For recurring reminders, generate occurrences
+    let currentDate = new Date(originalDueDate);
+    const now = new Date();
+
+    // If the original due date is in the past, find the next occurrence from now
+    if (currentDate < now) {
+      currentDate = await this.calculateNextDueDate(reminder) || new Date(originalDueDate);
+    }
+
+    // Add occurrences up to maxOccurrences
+    for (let i = 0; i < maxOccurrences; i++) {
+      if (currentDate) {
+        occurrences.push(new Date(currentDate));
+
+        // Calculate next occurrence
+        const nextOccurrence = await this.getNextReminderOccurrence({
+          ...reminder,
+          due_date: currentDate
+        });
+
+        if (!nextOccurrence) {
+          break;
+        }
+
+        currentDate = nextOccurrence;
+      } else {
         break;
       }
-
-      occurrences.push(nextOccurrence);
-      currentDate = nextOccurrence;
     }
 
     return occurrences;
   }
 
-  async getRemindersWithUpcomingOccurrences(userId: string, days: number = 30): Promise<Array<{reminder: Reminder, nextOccurrences: Date[]}>> {
+  async getRemindersWithUpcomingOccurrences(userId: string, days: number = 30): Promise<Array<{ reminder: Reminder, nextOccurrences: Date[] }>> {
     const reminders = await this.getActiveReminders(userId);
     const results = [];
 
@@ -312,15 +338,59 @@ export class ReminderService {
 
   async isReminderDue(reminder: Reminder, checkDate: Date = new Date()): Promise<boolean> {
     const dueDate = new Date(reminder.due_date);
-    
+
     // For one-time reminders, check if the due date matches
     if (reminder.recurrence === 'once') {
       return this.isSameDay(dueDate, checkDate);
     }
 
-    // For recurring reminders, check if any occurrence matches the check date
-    const occurrences = await this.getAllUpcomingOccurrences(reminder, 100);
-    return occurrences.some(occurrence => this.isSameDay(occurrence, checkDate));
+    // For recurring reminders, we need to check if the checkDate matches any occurrence
+    const originalDueDate = new Date(reminder.due_date);
+
+    // If the check date is before the original due date, it can't be due
+    if (checkDate < originalDueDate) {
+      return false;
+    }
+
+    switch (reminder.recurrence) {
+      case 'daily':
+        // Calculate days difference
+        const daysDiff = Math.floor((checkDate.getTime() - originalDueDate.getTime()) / (1000 * 60 * 60 * 24));
+        return daysDiff >= 0 && daysDiff % 1 === 0;
+
+      case 'weekly':
+        // Check if it's the same day of week and the right interval
+        if (checkDate.getDay() !== originalDueDate.getDay()) {
+          return false;
+        }
+        const weeksDiff = Math.floor((checkDate.getTime() - originalDueDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
+        return weeksDiff >= 0 && weeksDiff % 1 === 0;
+
+      case 'monthly':
+        // For monthly, check if the day matches (with adjustment for shorter months)
+        const originalDay = originalDueDate.getDate();
+        const checkDay = checkDate.getDate();
+        const adjustedDay = this.adjustDayForMonth(originalDay, checkDate.getFullYear(), checkDate.getMonth());
+
+        if (checkDay !== adjustedDay) {
+          return false;
+        }
+
+        // Check if the month difference is correct
+        const monthsDiff = (checkDate.getFullYear() - originalDueDate.getFullYear()) * 12 +
+          (checkDate.getMonth() - originalDueDate.getMonth());
+        return monthsDiff >= 0;
+
+      case 'custom':
+        if (!reminder.recurrence_interval) {
+          return false;
+        }
+        const customDaysDiff = Math.floor((checkDate.getTime() - originalDueDate.getTime()) / (1000 * 60 * 60 * 24));
+        return customDaysDiff >= 0 && customDaysDiff % reminder.recurrence_interval === 0;
+
+      default:
+        return false;
+    }
   }
 
   async getDueReminders(userId: string, checkDate: Date = new Date()): Promise<Reminder[]> {
@@ -339,8 +409,17 @@ export class ReminderService {
 
   private isSameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
+  }
+
+  private getLastDayOfMonth(year: number, month: number): number {
+    return new Date(year, month + 1, 0).getDate();
+  }
+
+  private adjustDayForMonth(originalDay: number, year: number, month: number): number {
+    const lastDayOfMonth = this.getLastDayOfMonth(year, month);
+    return Math.min(originalDay, lastDayOfMonth);
   }
 
   async calculateNextDueDate(reminder: Reminder): Promise<Date | null> {
@@ -354,23 +433,28 @@ export class ReminderService {
 
     // For recurring reminders, find the next occurrence
     let nextDate = new Date(dueDate);
-    
+
     // If the original due date is in the future, return it
     if (nextDate > now) {
       return nextDate;
     }
 
     // Calculate the next occurrence after now
-    while (nextDate <= now) {
+    const maxIterations = 100; // Prevent infinite loops
+    let iterations = 0;
+
+    while (nextDate <= now && iterations < maxIterations) {
+      iterations++;
+
       const nextOccurrence = await this.getNextReminderOccurrence({
         ...reminder,
         due_date: nextDate
       });
-      
+
       if (!nextOccurrence) {
         return null;
       }
-      
+
       nextDate = nextOccurrence;
     }
 

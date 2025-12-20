@@ -11,7 +11,13 @@ interface CalendarDay {
   date: Date;
   isCurrentMonth: boolean;
   isToday: boolean;
-  reminders: Reminder[];
+  reminders: ReminderOccurrence[];
+}
+
+interface ReminderOccurrence {
+  reminder: Reminder;
+  isRecurring: boolean;
+  originalDate: Date;
 }
 
 export const ReminderCalendar: React.FC<ReminderCalendarProps> = ({
@@ -25,6 +31,195 @@ export const ReminderCalendar: React.FC<ReminderCalendarProps> = ({
   useEffect(() => {
     fetchUserReminders();
   }, [fetchUserReminders]);
+
+  // Helper function to calculate monthly occurrence with day adjustment
+  const calculateMonthlyOccurrence = (originalDate: Date, targetMonth: number, targetYear: number): Date => {
+    const originalDay = originalDate.getDate();
+    
+    // Get the last day of the target month
+    const lastDayOfMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+    
+    // If original day is greater than the last day of target month, use last day
+    const adjustedDay = Math.min(originalDay, lastDayOfMonth);
+    
+    return new Date(targetYear, targetMonth, adjustedDay);
+  };
+
+  // Generate all occurrences for a reminder within the calendar view
+  const generateReminderOccurrences = (reminder: Reminder, startDate: Date, endDate: Date): ReminderOccurrence[] => {
+    const occurrences: ReminderOccurrence[] = [];
+    const originalDueDate = new Date(reminder.due_date);
+    
+    // If it's a one-time reminder, just check if it falls within the range
+    if (reminder.recurrence === 'once') {
+      if (originalDueDate >= startDate && originalDueDate <= endDate) {
+        occurrences.push({
+          reminder,
+          isRecurring: false,
+          originalDate: originalDueDate
+        });
+      }
+      return occurrences;
+    }
+
+    // For recurring reminders, we need to find all occurrences in the date range
+    switch (reminder.recurrence) {
+      case 'daily':
+        {
+          let currentDate = new Date(originalDueDate);
+          
+          // If original due date is before start date, find the first occurrence within range
+          if (currentDate < startDate) {
+            const daysDiff = Math.ceil((startDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
+            currentDate.setDate(currentDate.getDate() + daysDiff);
+          }
+          
+          while (currentDate <= endDate) {
+            if (currentDate >= startDate) {
+              occurrences.push({
+                reminder,
+                isRecurring: true,
+                originalDate: new Date(currentDate)
+              });
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
+            
+            // Check duration end
+            if (reminder.duration_end && currentDate > new Date(reminder.duration_end)) {
+              break;
+            }
+          }
+        }
+        break;
+        
+      case 'weekly':
+        {
+          let currentDate = new Date(originalDueDate);
+          
+          // If original due date is before start date, find the first occurrence within range
+          if (currentDate < startDate) {
+            const daysDiff = Math.ceil((startDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
+            const weeksDiff = Math.ceil(daysDiff / 7);
+            currentDate.setDate(currentDate.getDate() + (weeksDiff * 7));
+          }
+          
+          while (currentDate <= endDate) {
+            if (currentDate >= startDate) {
+              occurrences.push({
+                reminder,
+                isRecurring: true,
+                originalDate: new Date(currentDate)
+              });
+            }
+            currentDate.setDate(currentDate.getDate() + 7);
+            
+            // Check duration end
+            if (reminder.duration_end && currentDate > new Date(reminder.duration_end)) {
+              break;
+            }
+          }
+        }
+        break;
+        
+      case 'monthly':
+        {
+          const originalDay = originalDueDate.getDate();
+          
+          // Start from the original due date month/year or find the first month within range
+          let currentYear = originalDueDate.getFullYear();
+          let currentMonth = originalDueDate.getMonth();
+          
+          // If original due date is before start date, find the first month within range
+          if (originalDueDate < startDate) {
+            currentYear = startDate.getFullYear();
+            currentMonth = startDate.getMonth();
+            
+            // Check if we need to go to the next month
+            const monthlyOccurrence = calculateMonthlyOccurrence(originalDueDate, currentMonth, currentYear);
+            if (monthlyOccurrence < startDate) {
+              currentMonth++;
+              if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+              }
+            }
+          }
+          
+          // Generate monthly occurrences
+          const maxIterations = 50; // Prevent infinite loops
+          let iterations = 0;
+          
+          while (iterations < maxIterations) {
+            iterations++;
+            
+            const monthlyOccurrence = calculateMonthlyOccurrence(originalDueDate, currentMonth, currentYear);
+            
+            // If this occurrence is past our end date, stop
+            if (monthlyOccurrence > endDate) {
+              break;
+            }
+            
+            // If this occurrence is within our range, add it
+            if (monthlyOccurrence >= startDate && monthlyOccurrence <= endDate) {
+              occurrences.push({
+                reminder,
+                isRecurring: true,
+                originalDate: new Date(monthlyOccurrence)
+              });
+            }
+            
+            // Move to next month
+            currentMonth++;
+            if (currentMonth > 11) {
+              currentMonth = 0;
+              currentYear++;
+            }
+            
+            // Check duration end
+            if (reminder.duration_end) {
+              const nextOccurrence = calculateMonthlyOccurrence(originalDueDate, currentMonth, currentYear);
+              if (nextOccurrence > new Date(reminder.duration_end)) {
+                break;
+              }
+            }
+          }
+        }
+        break;
+        
+      case 'custom':
+        {
+          if (!reminder.recurrence_interval) break;
+          
+          let currentDate = new Date(originalDueDate);
+          
+          // If original due date is before start date, find the first occurrence within range
+          if (currentDate < startDate) {
+            const daysDiff = Math.ceil((startDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
+            const intervalsDiff = Math.ceil(daysDiff / reminder.recurrence_interval);
+            currentDate.setDate(currentDate.getDate() + (intervalsDiff * reminder.recurrence_interval));
+          }
+          
+          while (currentDate <= endDate) {
+            if (currentDate >= startDate) {
+              occurrences.push({
+                reminder,
+                isRecurring: true,
+                originalDate: new Date(currentDate)
+              });
+            }
+            currentDate.setDate(currentDate.getDate() + reminder.recurrence_interval);
+            
+            // Check duration end
+            if (reminder.duration_end && currentDate > new Date(reminder.duration_end)) {
+              break;
+            }
+          }
+        }
+        break;
+    }
+    
+    return occurrences;
+  };
 
   // Generate calendar days for the current month
   const calendarDays = useMemo(() => {
@@ -48,13 +243,24 @@ export const ReminderCalendar: React.FC<ReminderCalendarProps> = ({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    // Generate all reminder occurrences for the calendar view period
+    const allOccurrences: ReminderOccurrence[] = [];
+    reminders.forEach(reminder => {
+      if (reminder.is_active) {
+        const occurrences = generateReminderOccurrences(reminder, startDate, endDate);
+        allOccurrences.push(...occurrences);
+      }
+    });
+    
     for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-      const dayReminders = reminders.filter(reminder => {
-        const reminderDate = new Date(reminder.due_date);
-        reminderDate.setHours(0, 0, 0, 0);
-        const currentDay = new Date(date);
-        currentDay.setHours(0, 0, 0, 0);
-        return reminderDate.getTime() === currentDay.getTime() && reminder.is_active;
+      const currentDay = new Date(date);
+      currentDay.setHours(0, 0, 0, 0);
+      
+      // Find reminders for this specific day
+      const dayReminders = allOccurrences.filter(occurrence => {
+        const occurrenceDate = new Date(occurrence.originalDate);
+        occurrenceDate.setHours(0, 0, 0, 0);
+        return occurrenceDate.getTime() === currentDay.getTime();
       });
       
       days.push({
@@ -98,9 +304,9 @@ export const ReminderCalendar: React.FC<ReminderCalendarProps> = ({
     }).format(amount);
   };
 
-  const getDayRemindersTotal = (dayReminders: Reminder[]) => {
-    const payments = dayReminders.filter(r => r.type === 'Payment').reduce((sum, r) => sum + r.amount, 0);
-    const receivables = dayReminders.filter(r => r.type === 'Receivable').reduce((sum, r) => sum + r.amount, 0);
+  const getDayRemindersTotal = (dayReminders: ReminderOccurrence[]) => {
+    const payments = dayReminders.filter(r => r.reminder.type === 'Payment').reduce((sum, r) => sum + r.reminder.amount, 0);
+    const receivables = dayReminders.filter(r => r.reminder.type === 'Receivable').reduce((sum, r) => sum + r.reminder.amount, 0);
     return { payments, receivables };
   };
 
@@ -180,13 +386,13 @@ export const ReminderCalendar: React.FC<ReminderCalendarProps> = ({
 
         {/* Calendar Days */}
         <div className="grid grid-cols-7 gap-1 sm:gap-2">
-          {calendarDays.map((day, index) => {
+          {calendarDays.map((day, dayIndex) => {
             const { payments, receivables } = getDayRemindersTotal(day.reminders);
             const hasReminders = day.reminders.length > 0;
             
             return (
               <div
-                key={index}
+                key={dayIndex}
                 className={`
                   min-h-[60px] sm:min-h-[100px] p-1 sm:p-2 border rounded-lg cursor-pointer transition-all
                   ${day.isCurrentMonth ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100'}
@@ -223,6 +429,12 @@ export const ReminderCalendar: React.FC<ReminderCalendarProps> = ({
                         +{day.reminders.length - 2}
                       </div>
                     )}
+                    {/* Show recurring indicator */}
+                    {day.reminders.some(r => r.isRecurring) && (
+                      <div className="text-[8px] sm:text-[10px] text-blue-600 font-medium">
+                        ↻
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -244,12 +456,37 @@ export const ReminderCalendar: React.FC<ReminderCalendarProps> = ({
           </h3>
           
           {(() => {
-            const dayReminders = reminders.filter(reminder => {
-              const reminderDate = new Date(reminder.due_date);
-              reminderDate.setHours(0, 0, 0, 0);
+            const year = selectedDate.getFullYear();
+            const month = selectedDate.getMonth();
+            
+            // First day of the month
+            const firstDay = new Date(year, month, 1);
+            // Last day of the month
+            const lastDay = new Date(year, month + 1, 0);
+            
+            // Start from the first day of the week containing the first day of the month
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - startDate.getDay());
+            
+            // End at the last day of the week containing the last day of the month
+            const endDate = new Date(lastDay);
+            endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+            
+            // Generate all reminder occurrences for the calendar view period
+            const allOccurrences: ReminderOccurrence[] = [];
+            reminders.forEach(reminder => {
+              if (reminder.is_active) {
+                const occurrences = generateReminderOccurrences(reminder, startDate, endDate);
+                allOccurrences.push(...occurrences);
+              }
+            });
+            
+            const dayReminders = allOccurrences.filter(occurrence => {
+              const occurrenceDate = new Date(occurrence.originalDate);
+              occurrenceDate.setHours(0, 0, 0, 0);
               const selected = new Date(selectedDate);
               selected.setHours(0, 0, 0, 0);
-              return reminderDate.getTime() === selected.getTime() && reminder.is_active;
+              return occurrenceDate.getTime() === selected.getTime();
             });
 
             if (dayReminders.length === 0) {
@@ -260,43 +497,52 @@ export const ReminderCalendar: React.FC<ReminderCalendarProps> = ({
 
             return (
               <div className="space-y-3">
-                {dayReminders.map(reminder => (
+                {dayReminders.map((occurrence, occurrenceIndex) => (
                   <div
-                    key={reminder.id}
+                    key={`${occurrence.reminder.id}-${occurrenceIndex}`}
                     className={`
                       p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors
-                      ${reminder.type === 'Payment' 
+                      ${occurrence.reminder.type === 'Payment' 
                         ? 'bg-red-50 border-red-200 hover:bg-red-100' 
                         : 'bg-green-50 border-green-200 hover:bg-green-100'
                       }
                     `}
-                    onClick={() => onReminderClick?.(reminder)}
+                    onClick={() => onReminderClick?.(occurrence.reminder)}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 text-sm sm:text-base truncate">{reminder.title}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base truncate">
+                            {occurrence.reminder.title}
+                          </h4>
+                          {occurrence.isRecurring && (
+                            <span className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                              ↻ Recurring
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs sm:text-sm text-gray-600 mt-1 truncate">
-                          {getWalletName(reminder.wallet_id)}
+                          {getWalletName(occurrence.reminder.wallet_id)}
                         </p>
                         <div className="flex flex-wrap items-center mt-2 gap-2 sm:gap-4">
                           <span className={`
                             text-xs sm:text-sm font-medium
-                            ${reminder.type === 'Payment' ? 'text-red-700' : 'text-green-700'}
+                            ${occurrence.reminder.type === 'Payment' ? 'text-red-700' : 'text-green-700'}
                           `}>
-                            {reminder.type === 'Payment' ? 'Payment' : 'Receivable'}
+                            {occurrence.reminder.type === 'Payment' ? 'Payment' : 'Receivable'}
                           </span>
-                          {reminder.recurrence !== 'once' && (
+                          {occurrence.reminder.recurrence !== 'once' && (
                             <span className="text-xs sm:text-sm text-gray-500">
-                              Recurring {reminder.recurrence}
+                              Recurring {occurrence.reminder.recurrence}
                             </span>
                           )}
                         </div>
                       </div>
                       <div className={`
                         text-base sm:text-lg font-semibold self-end sm:self-start
-                        ${reminder.type === 'Payment' ? 'text-red-700' : 'text-green-700'}
+                        ${occurrence.reminder.type === 'Payment' ? 'text-red-700' : 'text-green-700'}
                       `}>
-                        {formatCurrency(reminder.amount)}
+                        {formatCurrency(occurrence.reminder.amount)}
                       </div>
                     </div>
                   </div>
