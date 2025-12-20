@@ -36,6 +36,7 @@ interface DashboardContextType {
   }) => Promise<void>;
   fetchChartData: (chartType: string, options?: {
     wallet_id?: string;
+    type?: 'Income' | 'Expense';
     period?: 'monthly' | 'weekly';
     months?: number;
   }) => Promise<void>;
@@ -137,6 +138,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchChartData = useCallback(async (chartType: string, options: {
     wallet_id?: string;
+    type?: 'Income' | 'Expense';
     period?: 'monthly' | 'weekly';
     months?: number;
   } = {}) => {
@@ -144,7 +146,15 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       setLoading(true);
       setError(null);
       const data = await dashboardApi.getChartData(chartType, options);
-      setChartData(prev => ({ ...prev, [chartType]: data }));
+      
+      // Create a unique cache key based on chart type and parameters
+      const cacheKey = `${chartType}-${options.type?.toLowerCase() || 'default'}-${options.wallet_id || 'all'}`;
+      
+      setChartData(prev => ({ 
+        ...prev, 
+        [chartType]: data, // Keep original key for backward compatibility
+        [cacheKey]: data   // Add unique key for specific parameters
+      }));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch chart data');
     } finally {

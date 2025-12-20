@@ -24,10 +24,12 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({
   const { chartData, fetchChartData, loading, error } = useDashboard();
 
   useEffect(() => {
-    fetchChartData('category-pie', { wallet_id: walletId });
-  }, [fetchChartData, walletId]);
+    fetchChartData('category-pie', { wallet_id: walletId, type });
+  }, [fetchChartData, walletId, type]);
 
-  const data = chartData['category-pie'];
+  // Create a unique cache key based on the parameters
+  const cacheKey = `category-pie-${type.toLowerCase()}-${walletId || 'all'}`;
+  const data = chartData[cacheKey] || chartData['category-pie'];
 
   const options = {
     responsive: true,

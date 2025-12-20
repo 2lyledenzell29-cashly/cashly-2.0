@@ -14,10 +14,6 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
   const { categories = [] } = useCategory();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  console.log('TransactionList: Rendering with transactions:', transactions.length, 'wallets:', wallets.length, 'categories:', categories.length);
-  console.log('TransactionList: Loading state:', loading);
-  console.log('TransactionList: Transactions data:', transactions);
-
   const getWalletName = (walletId: string) => {
     const wallet = wallets.find(w => w.id === walletId);
     return wallet?.name || 'Unknown Wallet';

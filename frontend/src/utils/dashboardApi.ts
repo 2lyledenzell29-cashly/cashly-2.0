@@ -214,6 +214,7 @@ export const dashboardApi = {
   // Get chart data
   async getChartData(chartType: string, options: {
     wallet_id?: string;
+    type?: 'Income' | 'Expense';
     period?: 'monthly' | 'weekly';
     months?: number;
   } = {}): Promise<ChartData> {

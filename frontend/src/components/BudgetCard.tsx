@@ -78,11 +78,21 @@ export const BudgetCard: React.FC<BudgetCardProps> = ({
     }
   };
 
-  const formatCurrency = (amount: number): string => {
+  const formatCurrency = (amount: number | null | undefined): string => {
+    if (amount === null || amount === undefined || isNaN(amount)) {
+      return '$0.00';
+    }
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(amount);
+  };
+
+  const formatPercentage = (percentage: number | null | undefined): string => {
+    if (percentage === null || percentage === undefined || isNaN(percentage)) {
+      return '0.0';
+    }
+    return percentage.toFixed(1);
   };
 
   const formatMonth = (month: string): string => {
@@ -182,14 +192,14 @@ export const BudgetCard: React.FC<BudgetCardProps> = ({
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-gray-600">Spent</span>
               <span className="text-sm font-medium text-gray-900">
-                {formatCurrency(budgetStatus.total_spent)} ({budgetStatus.percentage_used.toFixed(1)}%)
+                {formatCurrency(budgetStatus.total_spent)} ({formatPercentage(budgetStatus.percentage_used)}%)
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div
                 className={`h-3 rounded-full transition-all duration-300 ${getStatusColor(budgetStatus.status)}`}
                 style={{
-                  width: `${Math.min(budgetStatus.percentage_used, 100)}%`,
+                  width: `${Math.min(budgetStatus.percentage_used || 0, 100)}%`,
                 }}
               ></div>
             </div>

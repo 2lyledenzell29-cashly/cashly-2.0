@@ -7,6 +7,9 @@ interface CategoryBreakdownTableProps {
 
 const CategoryBreakdownTable: React.FC<CategoryBreakdownTableProps> = ({ breakdown }) => {
   const formatCurrency = (amount: number) => {
+    if (isNaN(amount) || !isFinite(amount)) {
+      return '$0.00';
+    }
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD'
@@ -14,6 +17,9 @@ const CategoryBreakdownTable: React.FC<CategoryBreakdownTableProps> = ({ breakdo
   };
 
   const formatPercentage = (percentage: number) => {
+    if (isNaN(percentage) || !isFinite(percentage)) {
+      return '0.0%';
+    }
     return `${percentage.toFixed(1)}%`;
   };
 
@@ -94,7 +100,7 @@ const CategoryBreakdownTable: React.FC<CategoryBreakdownTableProps> = ({ breakdo
                       <div
                         className="h-2 rounded-full"
                         style={{
-                          width: `${Math.min(item.percentage, 100)}%`,
+                          width: `${Math.min(isNaN(item.percentage) ? 0 : item.percentage, 100)}%`,
                           backgroundColor: getColorForIndex(index)
                         }}
                       ></div>
@@ -112,7 +118,7 @@ const CategoryBreakdownTable: React.FC<CategoryBreakdownTableProps> = ({ breakdo
         <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
           <div className="flex justify-between text-sm">
             <span className="font-medium text-gray-900">
-              Average per category: {formatCurrency(breakdown.total_amount / breakdown.breakdown.length)}
+              Average per category: {formatCurrency(breakdown.breakdown.length > 0 ? breakdown.total_amount / breakdown.breakdown.length : 0)}
             </span>
             <span className="text-gray-500">
               {breakdown.breakdown.length} categories

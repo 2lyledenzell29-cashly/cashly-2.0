@@ -87,11 +87,28 @@ export const BudgetStatus: React.FC<BudgetStatusProps> = ({
     }
   };
 
-  const formatCurrency = (amount: number): string => {
+  const formatCurrency = (amount: number | null | undefined): string => {
+    if (amount === null || amount === undefined || isNaN(amount)) {
+      return '$0.00';
+    }
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(amount);
+  };
+
+  const formatPercentage = (percentage: number | null | undefined): string => {
+    if (percentage === null || percentage === undefined || isNaN(percentage)) {
+      return '0.0';
+    }
+    return percentage.toFixed(1);
+  };
+
+  const safePercentage = (percentage: number | null | undefined): number => {
+    if (percentage === null || percentage === undefined || isNaN(percentage)) {
+      return 0;
+    }
+    return percentage;
   };
 
   if (loading) {
@@ -138,7 +155,7 @@ export const BudgetStatus: React.FC<BudgetStatusProps> = ({
               className={`w-2 h-2 rounded-full ${getStatusColor(budgetStatus.status)}`}
             ></div>
             <span className="text-xs font-medium text-gray-700">
-              {budgetStatus.percentage_used.toFixed(0)}% used
+              {formatPercentage(budgetStatus.percentage_used)}% used
             </span>
           </div>
           <span className="text-xs text-gray-600">
@@ -151,7 +168,7 @@ export const BudgetStatus: React.FC<BudgetStatusProps> = ({
           <div
             className={`h-1.5 rounded-full transition-all duration-300 ${getStatusColor(budgetStatus.status)}`}
             style={{
-              width: `${Math.min(budgetStatus.percentage_used, 100)}%`,
+              width: `${Math.min(safePercentage(budgetStatus.percentage_used), 100)}%`,
             }}
           ></div>
         </div>
@@ -172,7 +189,7 @@ export const BudgetStatus: React.FC<BudgetStatusProps> = ({
           </span>
         </div>
         <span className="text-sm text-gray-600">
-          {budgetStatus.percentage_used.toFixed(1)}%
+          {formatPercentage(budgetStatus.percentage_used)}%
         </span>
       </div>
 
@@ -205,7 +222,7 @@ export const BudgetStatus: React.FC<BudgetStatusProps> = ({
         <div
           className={`h-3 rounded-full transition-all duration-300 ${getStatusColor(budgetStatus.status)}`}
           style={{
-            width: `${Math.min(budgetStatus.percentage_used, 100)}%`,
+            width: `${Math.min(safePercentage(budgetStatus.percentage_used), 100)}%`,
           }}
         ></div>
       </div>
