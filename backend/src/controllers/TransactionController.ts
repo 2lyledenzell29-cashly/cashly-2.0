@@ -67,7 +67,7 @@ export class TransactionController {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
-      
+
       if (!userId) {
         res.status(401).json({
           success: false,
@@ -147,7 +147,7 @@ export class TransactionController {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
-      
+
       if (!userId) {
         res.status(401).json({
           success: false,
@@ -201,7 +201,7 @@ export class TransactionController {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
-      
+
       if (!userId) {
         res.status(401).json({
           success: false,
@@ -250,54 +250,36 @@ export class TransactionController {
         return;
       }
 
-      const { start_date, end_date, wallet_ids } = req.query;
+      const {
+        wallet_id,
+        category_id,
+        type,
+        start_date,
+        end_date
+      } = req.query as TransactionQueryParams;
 
-      let startDate: Date | undefined;
-      let endDate: Date | undefined;
-      let walletIdArray: string[] | undefined;
+      const { wallet_ids } = req.query as { wallet_ids?: string };
 
-      if (start_date) {
-        startDate = new Date(start_date as string);
-        if (isNaN(startDate.getTime())) {
-          res.status(400).json({
-            success: false,
-            error: {
-              code: 'VALIDATION_FAILED',
-              message: 'Invalid start_date format'
-            }
-          } as ApiResponse);
-          return;
-        }
-      }
+      // Build filters similar to getUserTransactions
+      const filters: any = {};
+      if (wallet_id) filters.wallet_id = wallet_id;
+      if (category_id) filters.category_id = category_id;
+      if (type && (type === 'Income' || type === 'Expense')) filters.type = type;
+      if (start_date) filters.start_date = new Date(start_date);
+      if (end_date) filters.end_date = new Date(end_date);
 
-      if (end_date) {
-        endDate = new Date(end_date as string);
-        if (isNaN(endDate.getTime())) {
-          res.status(400).json({
-            success: false,
-            error: {
-              code: 'VALIDATION_FAILED',
-              message: 'Invalid end_date format'
-            }
-          } as ApiResponse);
-          return;
-        }
-      }
-
+      // Handle legacy wallet_ids parameter for backward compatibility
       if (wallet_ids) {
+        let walletIdArray: string[] | undefined;
         if (typeof wallet_ids === 'string') {
-          walletIdArray = wallet_ids.split(',').map(id => id.trim()).filter(id => id);
-        } else if (Array.isArray(wallet_ids)) {
-          walletIdArray = wallet_ids.map(id => String(id).trim()).filter(id => id);
+          walletIdArray = wallet_ids.split(',').map((id: string) => id.trim()).filter((id: string) => id);
+        }
+        if (walletIdArray && walletIdArray.length > 0) {
+          filters.wallet_ids = walletIdArray;
         }
       }
 
-      const summary = await this.transactionService.getTransactionSummary(
-        userId,
-        startDate,
-        endDate,
-        walletIdArray
-      );
+      const summary = await this.transactionService.getTransactionSummary(userId, filters);
 
       res.status(200).json({
         success: true,

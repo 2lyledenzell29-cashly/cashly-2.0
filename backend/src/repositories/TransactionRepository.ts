@@ -201,6 +201,52 @@ export class TransactionRepository extends BaseRepository<Transaction> {
     };
   }
 
+  async getSummaryWithFilters(
+    filters: TransactionFilters,
+    walletIds: string[]
+  ): Promise<{ income: number; expense: number }> {
+    let query = this.db(this.tableName);
+
+    if (filters.user_id) {
+      query = query.where({ user_id: filters.user_id });
+    }
+
+    if (filters.wallet_id) {
+      query = query.where({ wallet_id: filters.wallet_id });
+    } else if (walletIds.length > 0) {
+      query = query.whereIn('wallet_id', walletIds);
+    }
+
+    if (filters.category_id) {
+      query = query.where({ category_id: filters.category_id });
+    }
+
+    if (filters.type) {
+      query = query.where({ type: filters.type });
+    }
+
+    if (filters.start_date) {
+      query = query.where('created_at', '>=', filters.start_date);
+    }
+
+    if (filters.end_date) {
+      query = query.where('created_at', '<=', filters.end_date);
+    }
+
+    const results = await query
+      .select('type')
+      .sum('amount as total')
+      .groupBy('type');
+
+    const income = results.find(r => r.type === 'Income')?.total || 0;
+    const expense = results.find(r => r.type === 'Expense')?.total || 0;
+
+    return {
+      income: parseFloat(income as string) || 0,
+      expense: parseFloat(expense as string) || 0
+    };
+  }
+
   async findWithFiltersForWallets(
     filters: TransactionFilters,
     walletIds: string[]

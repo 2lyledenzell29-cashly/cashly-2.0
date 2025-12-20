@@ -198,7 +198,10 @@ export class BudgetService {
     );
 
     // Sum up the amounts
-    return transactions.reduce((total, transaction) => total + transaction.amount, 0);
+    return transactions.reduce((total, transaction) => {
+      const amount = typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount;
+      return total + (amount || 0);
+    }, 0);
   }
 
   async validateBudgetOwnership(budgetId: string, userId: string): Promise<boolean> {

@@ -19,7 +19,7 @@ export class WalletService {
     // Get user's own wallets
     const ownWallets = await this.walletRepository.findByUserId(userId);
 
-    // Get family wallets user is a member of
+    // Get family wallets user is a member of (but doesn't own)
     const familyWalletIds = await this.familyWalletMemberRepository.getUserFamilyWalletIds(userId);
     let familyWallets: Wallet[] = [];
     
@@ -27,8 +27,11 @@ export class WalletService {
       const wallets = await Promise.all(
         familyWalletIds.map(walletId => this.walletRepository.findById(walletId))
       );
+      // Filter out wallets that are null, not family wallets, or already owned by the user
       familyWallets = wallets.filter((wallet): wallet is Wallet => 
-        wallet !== null && wallet.is_family
+        wallet !== null && 
+        wallet.is_family && 
+        wallet.user_id !== userId // Exclude wallets the user already owns
       );
     }
 

@@ -418,6 +418,7 @@ export class DashboardController {
       const {
         chart_type,
         wallet_id,
+        type,
         period = 'monthly',
         months = '6'
       } = req.query;
@@ -447,7 +448,7 @@ export class DashboardController {
         case 'category-pie':
           chartData = await this.dashboardService.getCategoryPieChartData(userId, {
             wallet_id: wallet_id as string,
-            type: 'Expense' // Default to expenses for pie chart
+            type: (type as 'Income' | 'Expense') || 'Expense'
           });
           break;
 

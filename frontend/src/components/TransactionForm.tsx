@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Transaction } from '@/types';
 import { useWallet } from '@/contexts/WalletContext';
 import { useCategory } from '@/contexts/CategoryContext';
+import SearchableSelect from './SearchableSelect';
 
 interface TransactionFormData {
   title: string;
@@ -35,6 +36,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     reset,
     setError,
     watch,
+    control,
   } = useForm<TransactionFormData>({
     defaultValues: {
       title: transaction?.title || '',
@@ -47,6 +49,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const watchType = watch('type');
   const filteredCategories = getCategoriesByType(watchType);
+
+  // Convert categories to options for SearchableSelect
+  const categoryOptions = filteredCategories.map(category => ({
+    value: category.id,
+    label: category.name
+  }));
 
   useEffect(() => {
     if (transaction) {
@@ -167,17 +175,21 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               <label htmlFor="category_id" className="block text-sm font-medium text-gray-700">
                 Category (Optional)
               </label>
-              <select
-                {...register('category_id')}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              >
-                <option value="">Uncategorized</option>
-                {filteredCategories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                name="category_id"
+                control={control}
+                render={({ field }) => (
+                  <SearchableSelect
+                    options={categoryOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Search for a category..."
+                    className="mt-1"
+                    allowEmpty={true}
+                    emptyLabel="Uncategorized"
+                  />
+                )}
+              />
             </div>
 
             {errors.root && (

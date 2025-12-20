@@ -23,7 +23,7 @@ export class TransactionService {
     page: number = 1,
     limit: number = 10,
     filters: Omit<TransactionFilters, 'user_id'> = {}
-  ): Promise<{ data: Transaction[]; total: number; page: number; limit: number }> {
+  ): Promise<{ transactions: Transaction[]; total: number; page: number; limit: number; totalPages: number }> {
     // Get user's accessible wallets (owned + family wallets they're members of)
     const accessibleWalletIds = await this.getAccessibleWalletIds(userId);
     
@@ -38,18 +38,29 @@ export class TransactionService {
       user_id: userId
     };
 
+    let result;
     // If no specific wallet filter, limit to accessible wallets
     if (!filters.wallet_id && accessibleWalletIds.length > 0) {
       // We'll handle this in the repository by modifying the query
-      return this.transactionRepository.findWithPaginationAndFiltersForWallets(
+      result = await this.transactionRepository.findWithPaginationAndFiltersForWallets(
         page,
         limit,
         transactionFilters,
         accessibleWalletIds
       );
+    } else {
+      result = await this.transactionRepository.findWithPaginationAndFilters(page, limit, transactionFilters);
     }
 
-    return this.transactionRepository.findWithPaginationAndFilters(page, limit, transactionFilters);
+    // Transform the response to match frontend expectations
+    const totalPages = Math.ceil(result.total / limit);
+    return {
+      transactions: result.data,
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+      totalPages
+    };
   }
 
   async getTransactionById(transactionId: string, userId: string): Promise<Transaction | null> {
@@ -166,48 +177,51 @@ export class TransactionService {
 
   async getTransactionSummary(
     userId: string,
-    startDate?: Date,
-    endDate?: Date,
-    walletIds?: string[]
+    filters: Omit<TransactionFilters, 'user_id'> & { wallet_ids?: string[] } = {}
   ): Promise<TransactionSummary> {
-    // Get user's accessible wallets if no specific wallets provided
-    let targetWalletIds = walletIds;
-    if (!targetWalletIds) {
-      targetWalletIds = await this.getAccessibleWalletIds(userId);
-    } else {
-      // Validate user has access to all provided wallet IDs
-      const accessibleWalletIds = await this.getAccessibleWalletIds(userId);
-      const hasAccessToAll = targetWalletIds.every(id => accessibleWalletIds.includes(id));
+    // Get user's accessible wallets
+    const accessibleWalletIds = await this.getAccessibleWalletIds(userId);
+    
+    // Determine target wallet IDs
+    let targetWalletIds: string[];
+    if (filters.wallet_id) {
+      // Single wallet filter
+      if (!accessibleWalletIds.includes(filters.wallet_id)) {
+        throw new Error('AUTH_RESOURCE_FORBIDDEN');
+      }
+      targetWalletIds = [filters.wallet_id];
+    } else if (filters.wallet_ids && filters.wallet_ids.length > 0) {
+      // Multiple wallet IDs (legacy support)
+      const hasAccessToAll = filters.wallet_ids.every(id => accessibleWalletIds.includes(id));
       if (!hasAccessToAll) {
         throw new Error('AUTH_RESOURCE_FORBIDDEN');
       }
+      targetWalletIds = filters.wallet_ids;
+    } else {
+      // No wallet filter - use all accessible wallets
+      targetWalletIds = accessibleWalletIds;
     }
 
-    // Set default date range if not provided (current month)
-    if (!startDate || !endDate) {
-      const now = new Date();
-      startDate = startDate || new Date(now.getFullYear(), now.getMonth(), 1);
-      endDate = endDate || new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    }
+    // Build transaction filters
+    const transactionFilters: TransactionFilters = {
+      user_id: userId,
+      category_id: filters.category_id,
+      type: filters.type,
+      start_date: filters.start_date,
+      end_date: filters.end_date
+    };
 
-    const summary = await this.transactionRepository.getSummaryByDateRange(
-      userId,
-      startDate,
-      endDate,
+    // Get summary data with filters
+    const summary = await this.transactionRepository.getSummaryWithFilters(
+      transactionFilters,
       targetWalletIds
     );
 
-    // Get total transaction count
-    const filters: TransactionFilters = {
-      user_id: userId,
-      start_date: startDate,
-      end_date: endDate
-    };
-
+    // Get total transaction count with same filters
     const { total } = await this.transactionRepository.findWithPaginationAndFiltersForWallets(
       1,
       1,
-      filters,
+      transactionFilters,
       targetWalletIds
     );
 

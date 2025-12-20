@@ -164,9 +164,11 @@ export class DashboardService {
     for (const walletId of walletIds) {
       const transactions = await this.transactionRepository.findByWalletId(walletId);
       const walletBalance = transactions.reduce((balance, transaction) => {
+        // Convert string amount to number
+        const amount = typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount;
         return transaction.type === 'Income' 
-          ? balance + transaction.amount 
-          : balance - transaction.amount;
+          ? balance + (amount || 0)
+          : balance - (amount || 0);
       }, 0);
       totalBalance += walletBalance;
     }
@@ -208,7 +210,10 @@ export class DashboardService {
         { type: 'Expense' }
       );
 
-      const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
+      const totalSpent = transactions.reduce((sum, t) => {
+        const amount = typeof t.amount === 'string' ? parseFloat(t.amount) : t.amount;
+        return sum + (amount || 0);
+      }, 0);
       const percentageUsed = budget.limit > 0 ? (totalSpent / budget.limit) * 100 : 0;
 
       if (percentageUsed > 100) {
@@ -298,11 +303,17 @@ export class DashboardService {
 
     const totalIncome = allTransactions
       .filter(t => t.type === 'Income')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => {
+        const amount = typeof t.amount === 'string' ? parseFloat(t.amount) : t.amount;
+        return sum + (amount || 0);
+      }, 0);
 
     const totalExpense = allTransactions
       .filter(t => t.type === 'Expense')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => {
+        const amount = typeof t.amount === 'string' ? parseFloat(t.amount) : t.amount;
+        return sum + (amount || 0);
+      }, 0);
 
     return {
       transactions: result.data,
@@ -360,8 +371,10 @@ export class DashboardService {
     for (const transaction of transactions) {
       const categoryId = transaction.category_id;
       const existing = categoryMap.get(categoryId) || { amount: 0, count: 0 };
+      // Convert string amount to number
+      const amount = typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount;
       categoryMap.set(categoryId, {
-        amount: existing.amount + transaction.amount,
+        amount: existing.amount + (amount || 0),
         count: existing.count + 1
       });
     }
@@ -652,7 +665,10 @@ export class DashboardService {
         { type: 'Expense' }
       );
 
-      const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
+      const totalSpent = transactions.reduce((sum, t) => {
+        const amount = typeof t.amount === 'string' ? parseFloat(t.amount) : t.amount;
+        return sum + (amount || 0);
+      }, 0);
       const remaining = Math.max(0, budget.limit - totalSpent);
       const percentageUsed = budget.limit > 0 ? (totalSpent / budget.limit) * 100 : 0;
 
