@@ -3,6 +3,8 @@ import Head from 'next/head';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Layout from '@/components/Layout';
 import { useTransaction } from '@/contexts/TransactionContext';
+import { useWallet } from '@/contexts/WalletContext';
+import { useCategory } from '@/contexts/CategoryContext';
 import { Transaction } from '@/types';
 import { TransactionFilters } from '@/utils/transactionApi';
 import TransactionForm from '@/components/TransactionForm';
@@ -11,7 +13,6 @@ import TransactionFiltersComponent from '@/components/TransactionFilters';
 
 const TransactionsPage: React.FC = () => {
   const { 
-    transactions, 
     total, 
     page, 
     totalPages, 
@@ -23,6 +24,9 @@ const TransactionsPage: React.FC = () => {
     fetchSummary 
   } = useTransaction();
   
+  const { refreshWallets } = useWallet();
+  const { refreshCategories } = useCategory();
+  
   const [showForm, setShowForm] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [currentFilters, setCurrentFilters] = useState<TransactionFilters>({
@@ -31,16 +35,18 @@ const TransactionsPage: React.FC = () => {
   });
 
   useEffect(() => {
-    fetchTransactions(currentFilters);
-    fetchSummary(currentFilters);
-  }, [currentFilters]);
+    // Load wallets and categories once on mount
+    refreshWallets();
+    refreshCategories();
+  }, []);
 
   const handleCreateTransaction = async (data: any) => {
     await createTransaction(data);
     setShowForm(false);
     // Refresh data
     fetchTransactions(currentFilters);
-    fetchSummary(currentFilters);
+    const { page: _, limit: __, ...summaryFilters } = currentFilters;
+    fetchSummary(summaryFilters);
   };
 
   const handleUpdateTransaction = async (data: any) => {
@@ -49,7 +55,8 @@ const TransactionsPage: React.FC = () => {
       setEditingTransaction(null);
       // Refresh data
       fetchTransactions(currentFilters);
-      fetchSummary(currentFilters);
+      const { page: _, limit: __, ...summaryFilters } = currentFilters;
+      fetchSummary(summaryFilters);
     }
   };
 
@@ -63,18 +70,27 @@ const TransactionsPage: React.FC = () => {
   };
 
   const handleFilter = (filters: TransactionFilters) => {
-    setCurrentFilters({
+    const newFilters = {
       ...filters,
       page: 1,
       limit: 10,
-    });
+    };
+    setCurrentFilters(newFilters);
+    // Fetch data with new filters
+    fetchTransactions(newFilters);
+    // For summary, exclude page and limit
+    const { page: _, limit: __, ...summaryFilters } = newFilters;
+    fetchSummary(summaryFilters);
   };
 
   const handlePageChange = (newPage: number) => {
-    setCurrentFilters(prev => ({
-      ...prev,
+    const newFilters = {
+      ...currentFilters,
       page: newPage,
-    }));
+    };
+    setCurrentFilters(newFilters);
+    // Fetch data with new page
+    fetchTransactions(newFilters);
   };
 
   const formatCurrency = (amount: number) => {

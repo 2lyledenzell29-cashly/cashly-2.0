@@ -1,10 +1,11 @@
 import { Budget, BudgetStatus, CreateBudgetRequest, UpdateBudgetRequest, ApiResponse } from '@/types';
+import { AuthService } from './auth';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
+  const token = AuthService.getToken();
   return {
     'Content-Type': 'application/json',
     ...(token && { Authorization: `Bearer ${token}` }),

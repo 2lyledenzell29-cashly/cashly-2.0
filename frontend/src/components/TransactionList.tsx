@@ -14,6 +14,10 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
   const { categories = [] } = useCategory();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
+  console.log('TransactionList: Rendering with transactions:', transactions.length, 'wallets:', wallets.length, 'categories:', categories.length);
+  console.log('TransactionList: Loading state:', loading);
+  console.log('TransactionList: Transactions data:', transactions);
+
   const getWalletName = (walletId: string) => {
     const wallet = wallets.find(w => w.id === walletId);
     return wallet?.name || 'Unknown Wallet';
@@ -39,7 +43,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
       style: 'currency',
       currency: 'USD',
     }).format(amount);
-    
+
     return type === 'Income' ? `+${formatted}` : `-${formatted}`;
   };
 
@@ -77,9 +81,8 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
             <div className="px-4 py-4 flex items-center justify-between">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    transaction.type === 'Income' ? 'bg-green-100' : 'bg-red-100'
-                  }`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${transaction.type === 'Income' ? 'bg-green-100' : 'bg-red-100'
+                    }`}>
                     {transaction.type === 'Income' ? (
                       <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -94,9 +97,8 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
                 <div className="ml-4">
                   <div className="flex items-center">
                     <p className="text-sm font-medium text-gray-900">{transaction.title}</p>
-                    <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      transaction.type === 'Income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${transaction.type === 'Income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
                       {transaction.type}
                     </span>
                   </div>
@@ -109,14 +111,14 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-center">
                 <div className="text-right mr-4">
                   <p className={`text-sm font-medium ${getAmountColor(transaction.type)}`}>
                     {formatAmount(transaction.amount, transaction.type)}
                   </p>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => onEdit(transaction)}
@@ -127,7 +129,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ onEdit }) => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                   </button>
-                  
+
                   <button
                     onClick={() => setDeleteConfirm(transaction.id)}
                     disabled={loading}
