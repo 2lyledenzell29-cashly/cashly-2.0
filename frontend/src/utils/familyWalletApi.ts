@@ -1,7 +1,7 @@
 import { ApiResponse, Wallet, FamilyWalletMember, Invitation } from '@/types';
 import { AuthService } from './auth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export interface CreateFamilyWalletRequest {
   name: string;
@@ -23,7 +23,7 @@ const getAuthHeaders = (): Record<string, string> => {
  * Create a new family wallet
  */
 export const createFamilyWallet = async (data: CreateFamilyWalletRequest): Promise<Wallet> => {
-  const response = await fetch(`${API_BASE_URL}/family-wallets`, {
+  const response = await fetch(`${API_BASE_URL}/api/family-wallets`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export const createFamilyWallet = async (data: CreateFamilyWalletRequest): Promi
  * Get user's family wallets
  */
 export const getUserFamilyWallets = async (): Promise<Wallet[]> => {
-  const response = await fetch(`${API_BASE_URL}/family-wallets/user`, {
+  const response = await fetch(`${API_BASE_URL}/api/family-wallets/user`, {
     method: 'GET',
     headers: {
       ...getAuthHeaders(),
@@ -65,7 +65,7 @@ export const getUserFamilyWallets = async (): Promise<Wallet[]> => {
  * Get family wallet members
  */
 export const getFamilyWalletMembers = async (walletId: string): Promise<FamilyWalletMember[]> => {
-  const response = await fetch(`${API_BASE_URL}/family-wallets/${walletId}/members`, {
+  const response = await fetch(`${API_BASE_URL}/api/family-wallets/${walletId}/members`, {
     method: 'GET',
     headers: {
       ...getAuthHeaders(),
@@ -88,7 +88,7 @@ export const inviteToFamilyWallet = async (
   walletId: string, 
   data: InviteToFamilyWalletRequest
 ): Promise<Invitation> => {
-  const response = await fetch(`${API_BASE_URL}/family-wallets/${walletId}/invite`, {
+  const response = await fetch(`${API_BASE_URL}/api/family-wallets/${walletId}/invite`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export const inviteToFamilyWallet = async (
  * Get family wallet invitations (for owners)
  */
 export const getFamilyWalletInvitations = async (walletId: string): Promise<Invitation[]> => {
-  const response = await fetch(`${API_BASE_URL}/family-wallets/${walletId}/invitations`, {
+  const response = await fetch(`${API_BASE_URL}/api/family-wallets/${walletId}/invitations`, {
     method: 'GET',
     headers: {
       ...getAuthHeaders(),
@@ -133,7 +133,7 @@ export const removeFamilyWalletMember = async (
   walletId: string, 
   memberId: string
 ): Promise<boolean> => {
-  const response = await fetch(`${API_BASE_URL}/family-wallets/${walletId}/members/${memberId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/family-wallets/${walletId}/members/${memberId}`, {
     method: 'DELETE',
     headers: {
       ...getAuthHeaders(),
@@ -153,7 +153,7 @@ export const removeFamilyWalletMember = async (
  * Get user's pending invitations
  */
 export const getUserPendingInvitations = async (): Promise<Invitation[]> => {
-  const response = await fetch(`${API_BASE_URL}/family-wallets/invitations/pending`, {
+  const response = await fetch(`${API_BASE_URL}/api/family-wallets/invitations/pending`, {
     method: 'GET',
     headers: {
       ...getAuthHeaders(),
@@ -173,7 +173,7 @@ export const getUserPendingInvitations = async (): Promise<Invitation[]> => {
  * Accept family wallet invitation
  */
 export const acceptInvitation = async (invitationId: string): Promise<FamilyWalletMember> => {
-  const response = await fetch(`${API_BASE_URL}/family-wallets/invitations/${invitationId}/accept`, {
+  const response = await fetch(`${API_BASE_URL}/api/family-wallets/invitations/${invitationId}/accept`, {
     method: 'POST',
     headers: {
       ...getAuthHeaders(),
@@ -193,7 +193,7 @@ export const acceptInvitation = async (invitationId: string): Promise<FamilyWall
  * Decline family wallet invitation
  */
 export const declineInvitation = async (invitationId: string): Promise<Invitation> => {
-  const response = await fetch(`${API_BASE_URL}/family-wallets/invitations/${invitationId}/decline`, {
+  const response = await fetch(`${API_BASE_URL}/api/family-wallets/invitations/${invitationId}/decline`, {
     method: 'POST',
     headers: {
       ...getAuthHeaders(),

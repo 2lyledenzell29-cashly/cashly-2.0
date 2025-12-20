@@ -1,6 +1,6 @@
 import { Budget, BudgetStatus, CreateBudgetRequest, UpdateBudgetRequest, ApiResponse } from '@/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
@@ -25,7 +25,7 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 export const budgetApi = {
   // Get all user budgets
   getUserBudgets: async (): Promise<Budget[]> => {
-    const response = await fetch(`${API_BASE_URL}/budgets`, {
+    const response = await fetch(`${API_BASE_URL}/api/budgets`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -35,7 +35,7 @@ export const budgetApi = {
 
   // Get budgets for specific wallet
   getWalletBudgets: async (walletId: string): Promise<Budget[]> => {
-    const response = await fetch(`${API_BASE_URL}/budgets/wallet/${walletId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/budgets/wallet/${walletId}`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -45,7 +45,7 @@ export const budgetApi = {
 
   // Get specific budget
   getBudgetById: async (budgetId: string): Promise<Budget> => {
-    const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/budgets/${budgetId}`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -55,7 +55,7 @@ export const budgetApi = {
 
   // Create new budget
   createBudget: async (budgetData: CreateBudgetRequest): Promise<Budget> => {
-    const response = await fetch(`${API_BASE_URL}/budgets`, {
+    const response = await fetch(`${API_BASE_URL}/api/budgets`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(budgetData),
@@ -66,7 +66,7 @@ export const budgetApi = {
 
   // Update budget
   updateBudget: async (budgetId: string, budgetData: UpdateBudgetRequest): Promise<Budget> => {
-    const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/budgets/${budgetId}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(budgetData),
@@ -77,7 +77,7 @@ export const budgetApi = {
 
   // Delete budget
   deleteBudget: async (budgetId: string): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/budgets/${budgetId}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
@@ -87,7 +87,7 @@ export const budgetApi = {
 
   // Get budget status with calculations
   getBudgetStatus: async (budgetId: string): Promise<BudgetStatus> => {
-    const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}/status`, {
+    const response = await fetch(`${API_BASE_URL}/api/budgets/${budgetId}/status`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -97,7 +97,7 @@ export const budgetApi = {
 
   // Get current month budget status for wallet
   getCurrentMonthBudgetStatus: async (walletId: string): Promise<BudgetStatus> => {
-    const response = await fetch(`${API_BASE_URL}/budgets/wallet/${walletId}/current`, {
+    const response = await fetch(`${API_BASE_URL}/api/budgets/wallet/${walletId}/current`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });

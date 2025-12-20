@@ -1,7 +1,7 @@
 import { ApiResponse } from '@/types';
 import { AuthService } from './auth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 // Dashboard Summary Types
 export interface DashboardSummary {
@@ -105,7 +105,7 @@ export const dashboardApi = {
   // Get dashboard summary
   async getSummary(): Promise<DashboardSummary> {
     const token = AuthService.getToken();
-    const response = await fetch(`${API_BASE_URL}/dashboard/summary`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/summary`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ export const dashboardApi = {
       }
     });
 
-    const response = await fetch(`${API_BASE_URL}/dashboard/reports/transactions?${queryParams}`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/reports/transactions?${queryParams}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ export const dashboardApi = {
       }
     });
 
-    const response = await fetch(`${API_BASE_URL}/dashboard/reports/category-breakdown?${queryParams}`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/reports/category-breakdown?${queryParams}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -195,7 +195,7 @@ export const dashboardApi = {
       }
     });
 
-    const response = await fetch(`${API_BASE_URL}/dashboard/reports/trends?${queryParams}`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/reports/trends?${queryParams}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ export const dashboardApi = {
       }
     });
 
-    const response = await fetch(`${API_BASE_URL}/dashboard/charts?${queryParams}`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/charts?${queryParams}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -246,7 +246,7 @@ export const dashboardApi = {
   // Export transactions
   async exportTransactions(exportRequest: ExportRequest): Promise<Blob> {
     const token = AuthService.getToken();
-    const response = await fetch(`${API_BASE_URL}/dashboard/export/transactions`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/export/transactions`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -266,7 +266,7 @@ export const dashboardApi = {
   // Export category breakdown
   async exportCategoryBreakdown(exportRequest: Omit<ExportRequest, 'format'> & { filename?: string }): Promise<Blob> {
     const token = AuthService.getToken();
-    const response = await fetch(`${API_BASE_URL}/dashboard/export/category-breakdown`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/export/category-breakdown`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -291,7 +291,7 @@ export const dashboardApi = {
     filename?: string;
   }): Promise<Blob> {
     const token = AuthService.getToken();
-    const response = await fetch(`${API_BASE_URL}/dashboard/export/trends`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/export/trends`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

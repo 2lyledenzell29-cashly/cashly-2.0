@@ -1,7 +1,7 @@
 import { ApiResponse, Wallet } from '@/types';
 import { AuthService } from './auth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export interface CreateWalletData {
   name: string;
@@ -18,7 +18,7 @@ export class WalletService {
   ): Promise<ApiResponse<T>> {
     const token = AuthService.getToken();
     
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(`${API_BASE_URL}/api${endpoint}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
