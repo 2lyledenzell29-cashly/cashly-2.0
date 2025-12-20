@@ -26,7 +26,9 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
   className = "",
   disabled = false,
   allowEmpty = true,
-  emptyLabel = "None"
+  emptyLabel = "None",
+  onCreateNew,
+  createNewLabel = "Create new"
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -40,9 +42,17 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
   );
 
   // Add empty option if allowed
-  const allOptions = allowEmpty 
+  let allOptions = allowEmpty 
     ? [{ value: '', label: emptyLabel }, ...filteredOptions]
     : filteredOptions;
+
+  // Add "Create new" option if onCreateNew is provided and search term doesn't match any existing option
+  const showCreateNew = onCreateNew && searchTerm.trim() && 
+    !options.some(option => option.label.toLowerCase() === searchTerm.toLowerCase());
+  
+  if (showCreateNew) {
+    allOptions = [...allOptions, { value: `__create_new__${searchTerm}`, label: `${createNewLabel}: "${searchTerm}"` }];
+  }
 
   // Get display value
   const selectedOption = options.find(option => option.value === value);
@@ -102,6 +112,16 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
   };
 
   const handleSelect = (selectedValue: string) => {
+    // Handle "Create new" option
+    if (selectedValue.startsWith('__create_new__') && onCreateNew) {
+      const newItemName = selectedValue.replace('__create_new__', '');
+      onCreateNew(newItemName);
+      setIsOpen(false);
+      setSearchTerm('');
+      setHighlightedIndex(-1);
+      return;
+    }
+
     onChange(selectedValue);
     setIsOpen(false);
     setSearchTerm('');
@@ -140,7 +160,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
           type="text"
           className="w-full border-none bg-transparent p-0 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-0 sm:text-sm"
           placeholder={isOpen ? "Type to search..." : (displayValue || placeholder)}
-          value={isOpen ? searchTerm : ''}
+          value={isOpen ? searchTerm : displayValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           disabled={disabled}
@@ -175,12 +195,24 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
                   relative cursor-pointer select-none py-2 pl-3 pr-9 
                   ${index === highlightedIndex ? 'bg-blue-600 text-white' : 'text-gray-900 hover:bg-gray-100'}
                   ${option.value === value ? 'font-semibold' : 'font-normal'}
+                  ${option.value.startsWith('__create_new__') ? 'border-t border-gray-200 bg-gray-50 italic' : ''}
                 `}
                 onClick={() => handleSelect(option.value)}
                 onMouseEnter={() => setHighlightedIndex(index)}
               >
-                <span className="block truncate">{option.label}</span>
-                {option.value === value && (
+                <span className="block truncate">
+                  {option.value.startsWith('__create_new__') ? (
+                    <span className="flex items-center">
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      {option.label}
+                    </span>
+                  ) : (
+                    option.label
+                  )}
+                </span>
+                {option.value === value && !option.value.startsWith('__create_new__') && (
                   <span className={`absolute inset-y-0 right-0 flex items-center pr-4 ${index === highlightedIndex ? 'text-white' : 'text-blue-600'}`}>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path

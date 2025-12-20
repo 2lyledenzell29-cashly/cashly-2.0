@@ -27,7 +27,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   loading = false,
 }) => {
   const { wallets, defaultWallet } = useWallet();
-  const { categories, getCategoriesByType } = useCategory();
+  const { getCategoriesByType, createCategory } = useCategory();
   
   const {
     register,
@@ -49,6 +49,32 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const watchType = watch('type');
   const filteredCategories = getCategoriesByType(watchType);
+
+  const handleCreateNewCategory = async (categoryName: string) => {
+    try {
+      const newCategoryData = {
+        name: categoryName,
+        type: watchType,
+      };
+      
+      await createCategory(newCategoryData);
+      
+      // Wait a bit for the category to be added to the context state
+      setTimeout(() => {
+        const updatedCategories = getCategoriesByType(watchType);
+        const newCategory = updatedCategories.find(cat => cat.name === categoryName);
+        if (newCategory) {
+          const formData = watch();
+          reset({
+            ...formData,
+            category_id: newCategory.id
+          });
+        }
+      }, 100);
+    } catch (error) {
+      // Error is already handled in the context with toast
+    }
+  };
 
   // Convert categories to options for SearchableSelect
   const categoryOptions = filteredCategories.map(category => ({
@@ -187,6 +213,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     className="mt-1"
                     allowEmpty={true}
                     emptyLabel="Uncategorized"
+                    onCreateNew={handleCreateNewCategory}
+                    createNewLabel={`Create new ${watchType.toLowerCase()} category`}
                   />
                 )}
               />
