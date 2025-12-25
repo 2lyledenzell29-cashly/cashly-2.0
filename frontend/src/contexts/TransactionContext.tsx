@@ -64,9 +64,7 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
   React.useEffect(() => {
     if (user && !initialized) {
       console.log('TransactionContext: Initializing data for user:', user.id);
-      const defaultFilters = { page: 1, limit: 10 };
-      fetchTransactions(defaultFilters);
-      fetchSummary({}); // Summary doesn't need page/limit
+      // We'll let the transactions page handle the initial load with default wallet
       setInitialized(true);
     } else if (!user && initialized) {
       // Reset state when user logs out

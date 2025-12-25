@@ -8,8 +8,8 @@ export interface AuthTokens {
 }
 
 export class AuthService {
-  private static TOKEN_KEY = 'wallet_app_token';
-  private static REFRESH_TOKEN_KEY = 'wallet_app_refresh_token';
+  private static TOKEN_KEY = 'cashly_token';
+  private static REFRESH_TOKEN_KEY = 'cashly_refresh_token';
 
   static getToken(): string | null {
     if (typeof window === 'undefined') return null;

@@ -310,7 +310,7 @@ const DashboardPage: React.FC = () => {
   return (
     <ProtectedRoute>
       <Head>
-        <title>Dashboard - Wallet App</title>
+        <title>Dashboard - Cashly</title>
         <meta name="description" content="Your personal finance dashboard with comprehensive reporting and analytics" />
       </Head>
       <DashboardProvider>

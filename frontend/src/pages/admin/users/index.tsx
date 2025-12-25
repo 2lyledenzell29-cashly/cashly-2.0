@@ -117,7 +117,7 @@ const AdminUsersPage: React.FC = () => {
   return (
     <ProtectedRoute>
       <Head>
-        <title>User Management - Wallet App</title>
+        <title>User Management - Cashly</title>
         <meta name="description" content="Manage users" />
       </Head>
       

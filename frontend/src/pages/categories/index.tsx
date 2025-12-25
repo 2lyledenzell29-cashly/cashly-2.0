@@ -48,7 +48,7 @@ const CategoriesPage: React.FC = () => {
   return (
     <ProtectedRoute>
       <Head>
-        <title>Categories - Wallet App</title>
+        <title>Categories - Cashly</title>
         <meta name="description" content="Manage your transaction categories" />
       </Head>
       

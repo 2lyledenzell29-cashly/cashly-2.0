@@ -1,4 +1,4 @@
-# Wallet Application v2.0
+# Cashly 2.0
 
 A comprehensive personal finance management application with multi-wallet support, custom categories, budgeting, reminders, and family wallet sharing.
 
@@ -36,7 +36,7 @@ A comprehensive personal finance management application with multi-wallet suppor
 ## Project Structure
 
 ```
-wallet-app/
+cashly/
 ├── backend/                 # Node.js API server
 │   ├── src/
 │   │   ├── controllers/     # API endpoint controllers
@@ -93,7 +93,7 @@ wallet-app/
 
 4. Configure your Neon database connection in `.env`:
    ```env
-   DATABASE_URL=postgresql://username:password@ep-example-123456.us-east-1.aws.neon.tech/wallet_app_dev?sslmode=require
+   DATABASE_URL=postgresql://username:password@ep-example-123456.us-east-1.aws.neon.tech/cashly_dev?sslmode=require
    JWT_SECRET=your-super-secret-jwt-key
    ```
    

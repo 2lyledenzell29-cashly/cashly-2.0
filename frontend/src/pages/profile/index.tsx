@@ -67,7 +67,7 @@ const ProfilePage: React.FC = () => {
   return (
     <ProtectedRoute>
       <Head>
-        <title>Profile - Wallet App</title>
+        <title>Profile - Cashly</title>
         <meta name="description" content="Manage your profile settings" />
       </Head>
       

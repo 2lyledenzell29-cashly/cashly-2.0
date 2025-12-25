@@ -2,18 +2,18 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('wallet_app_token')?.value;
+  const token = request.cookies.get('cashly_token')?.value;
   const { pathname } = request.nextUrl;
 
   // Public routes that don't require authentication
   const publicRoutes = ['/', '/auth/login', '/auth/register'];
-  
+
   // Admin routes that require admin role
   const adminRoutes = ['/admin'];
 
   // Check if the current path is a public route
   const isPublicRoute = publicRoutes.some(route => pathname === route);
-  
+
   // Check if the current path is an admin route
   const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route));
 

@@ -114,7 +114,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-          <h1 className="text-xl font-semibold text-gray-900">Wallet App</h1>
+          <h1 className="text-xl font-semibold text-gray-900">Cashly</h1>
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
@@ -195,7 +195,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
             </svg>
           </button>
           <h1 className="text-lg font-semibold text-gray-900">
-            {currentPage || 'Wallet App'}
+            {currentPage || 'Cashly'}
           </h1>
           <div className="w-10" /> {/* Spacer for centering */}
         </div>

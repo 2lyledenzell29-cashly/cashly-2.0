@@ -1,7 +1,7 @@
 {
-  "name": "wallet-app-backend",
+  "name": "cashly-backend",
   "version": "1.0.0",
-  "description": "Wallet Application v2.0 Backend API",
+  "description": "Cashly 2.0 Backend API",
   "main": "dist/index.js",
   "scripts": {
     "dev": "concurrently \"tsc --watch\" \"nodemon\"",

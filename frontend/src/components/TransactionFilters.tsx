@@ -2,30 +2,27 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useWallet } from '@/contexts/WalletContext';
 import { useCategory } from '@/contexts/CategoryContext';
 import { TransactionFilters as Filters } from '@/utils/transactionApi';
 
 interface TransactionFiltersProps {
-  onFilter: (filters: Filters) => void;
-  currentFilters: Filters;
+  onFilter: (filters: Omit<Filters, 'wallet_id'>) => void;
+  currentFilters: Omit<Filters, 'wallet_id'>;
 }
 
 const TransactionFilters: React.FC<TransactionFiltersProps> = ({ onFilter, currentFilters }) => {
-  const { wallets } = useWallet();
   const { categories } = useCategory();
   
-  const { register, handleSubmit, reset } = useForm<Filters>({
+  const { register, handleSubmit, reset } = useForm<Omit<Filters, 'wallet_id'>>({
     defaultValues: currentFilters,
   });
 
-  const onSubmit = (data: Filters) => {
+  const onSubmit = (data: Omit<Filters, 'wallet_id'>) => {
     onFilter(data);
   };
 
   const handleReset = () => {
     reset({
-      wallet_id: '',
       category_id: '',
       type: undefined,
       start_date: '',
@@ -36,24 +33,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ onFilter, curre
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-4 rounded-lg shadow-md mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div>
-          <label htmlFor="wallet_id" className="block text-sm font-medium text-gray-700 mb-1">
-            Wallet
-          </label>
-          <select
-            {...register('wallet_id')}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          >
-            <option value="">All Wallets</option>
-            {wallets.map((wallet) => (
-              <option key={wallet.id} value={wallet.id}>
-                {wallet.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
           <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-1">
             Category

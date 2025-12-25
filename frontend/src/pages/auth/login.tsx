@@ -30,8 +30,8 @@ const LoginPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Login - Wallet App</title>
-        <meta name="description" content="Login to your Wallet App account" />
+        <title>Login - Cashly</title>
+        <meta name="description" content="Login to your Cashly account" />
       </Head>
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">

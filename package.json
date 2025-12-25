@@ -1,7 +1,7 @@
 {
-  "name": "wallet-app",
+  "name": "cashly",
   "version": "2.0.0",
-  "description": "Personal Finance Management Application",
+  "description": "Cashly 2.0 - Personal Finance Management Application",
   "private": true,
   "workspaces": [
     "backend",

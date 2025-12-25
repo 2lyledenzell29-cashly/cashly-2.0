@@ -10,6 +10,7 @@ import { TransactionFilters } from '@/utils/transactionApi';
 import TransactionForm from '@/components/TransactionForm';
 import TransactionList from '@/components/TransactionList';
 import TransactionFiltersComponent from '@/components/TransactionFilters';
+import WalletSelector from '@/components/WalletSelector';
 
 const TransactionsPage: React.FC = () => {
   const { 
@@ -24,15 +25,17 @@ const TransactionsPage: React.FC = () => {
     fetchSummary 
   } = useTransaction();
   
-  const { refreshWallets } = useWallet();
+  const { refreshWallets, defaultWallet, wallets } = useWallet();
   const { refreshCategories } = useCategory();
   
   const [showForm, setShowForm] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [currentFilters, setCurrentFilters] = useState<TransactionFilters>({
+  const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
+  const [currentFilters, setCurrentFilters] = useState<Omit<TransactionFilters, 'wallet_id'>>({
     page: 1,
     limit: 10,
   });
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     // Load wallets and categories once on mount
@@ -40,12 +43,35 @@ const TransactionsPage: React.FC = () => {
     refreshCategories();
   }, []);
 
+  // Initialize with default wallet when wallets are loaded
+  useEffect(() => {
+    if (defaultWallet && !initialized) {
+      setSelectedWalletId(defaultWallet.id);
+      const initialFilters = {
+        ...currentFilters,
+        wallet_id: defaultWallet.id,
+      };
+      fetchTransactions(initialFilters);
+      const { page: _, limit: __, ...summaryFilters } = initialFilters;
+      fetchSummary(summaryFilters);
+      setInitialized(true);
+    }
+  }, [defaultWallet, initialized]);
+
+  const buildFilters = (baseFilters: Omit<TransactionFilters, 'wallet_id'>) => {
+    return {
+      ...baseFilters,
+      wallet_id: selectedWalletId || undefined,
+    };
+  };
+
   const handleCreateTransaction = async (data: any) => {
     await createTransaction(data);
     setShowForm(false);
     // Refresh data
-    fetchTransactions(currentFilters);
-    const { page: _, limit: __, ...summaryFilters } = currentFilters;
+    const filters = buildFilters(currentFilters);
+    fetchTransactions(filters);
+    const { page: _, limit: __, ...summaryFilters } = filters;
     fetchSummary(summaryFilters);
   };
 
@@ -54,8 +80,9 @@ const TransactionsPage: React.FC = () => {
       await updateTransaction(editingTransaction.id, data);
       setEditingTransaction(null);
       // Refresh data
-      fetchTransactions(currentFilters);
-      const { page: _, limit: __, ...summaryFilters } = currentFilters;
+      const filters = buildFilters(currentFilters);
+      fetchTransactions(filters);
+      const { page: _, limit: __, ...summaryFilters } = filters;
       fetchSummary(summaryFilters);
     }
   };
@@ -69,7 +96,7 @@ const TransactionsPage: React.FC = () => {
     setEditingTransaction(null);
   };
 
-  const handleFilter = (filters: TransactionFilters) => {
+  const handleFilter = (filters: Omit<TransactionFilters, 'wallet_id'>) => {
     const newFilters = {
       ...filters,
       page: 1,
@@ -77,9 +104,19 @@ const TransactionsPage: React.FC = () => {
     };
     setCurrentFilters(newFilters);
     // Fetch data with new filters
-    fetchTransactions(newFilters);
+    const fullFilters = buildFilters(newFilters);
+    fetchTransactions(fullFilters);
     // For summary, exclude page and limit
-    const { page: _, limit: __, ...summaryFilters } = newFilters;
+    const { page: _, limit: __, ...summaryFilters } = fullFilters;
+    fetchSummary(summaryFilters);
+  };
+
+  const handleWalletChange = (walletId: string | null) => {
+    setSelectedWalletId(walletId);
+    // Fetch data with new wallet selection
+    const filters = buildFilters(currentFilters);
+    fetchTransactions(filters);
+    const { page: _, limit: __, ...summaryFilters } = filters;
     fetchSummary(summaryFilters);
   };
 
@@ -90,7 +127,8 @@ const TransactionsPage: React.FC = () => {
     };
     setCurrentFilters(newFilters);
     // Fetch data with new page
-    fetchTransactions(newFilters);
+    const fullFilters = buildFilters(newFilters);
+    fetchTransactions(fullFilters);
   };
 
   const formatCurrency = (amount: number) => {
@@ -103,7 +141,7 @@ const TransactionsPage: React.FC = () => {
   return (
     <ProtectedRoute>
       <Head>
-        <title>Transactions - Wallet App</title>
+        <title>Transactions - Cashly</title>
         <meta name="description" content="Manage your transactions" />
       </Head>
       
@@ -206,6 +244,12 @@ const TransactionsPage: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Wallet Selection */}
+            <WalletSelector 
+              selectedWalletId={selectedWalletId}
+              onWalletChange={handleWalletChange}
+            />
 
             {/* Filters */}
             <TransactionFiltersComponent onFilter={handleFilter} currentFilters={currentFilters} />

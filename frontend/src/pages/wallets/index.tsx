@@ -40,7 +40,7 @@ const WalletsPage: React.FC = () => {
   return (
     <ProtectedRoute>
       <Head>
-        <title>Wallets - Wallet App</title>
+        <title>Wallets - Cashly</title>
         <meta name="description" content="Manage your wallets" />
       </Head>
       

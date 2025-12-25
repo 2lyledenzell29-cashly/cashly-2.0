@@ -1,7 +1,7 @@
 {
-  "name": "wallet-app-frontend",
+  "name": "cashly-frontend",
   "version": "0.1.0",
-  "description": "Wallet Application v2.0 Frontend",
+  "description": "Cashly 2.0 Frontend",
   "private": true,
   "scripts": {
     "dev": "next dev",

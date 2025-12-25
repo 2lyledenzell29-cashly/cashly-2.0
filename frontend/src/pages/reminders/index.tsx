@@ -70,7 +70,7 @@ const RemindersPage: React.FC = () => {
   return (
     <ProtectedRoute>
       <Head>
-        <title>Reminders - Wallet App</title>
+        <title>Reminders - Cashly</title>
         <meta name="description" content="Manage your payment and receivable reminders" />
       </Head>
       

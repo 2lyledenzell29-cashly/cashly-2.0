@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Wallet App v2.0</title>
+        <title>Cashly 2.0</title>
         <meta name="description" content="Personal Finance Management Application" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -34,7 +34,7 @@ export default function Home() {
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Wallet App v2.0
+              Cashly 2.0
             </h1>
             <p className="text-lg text-gray-600">
               Personal Finance Management
@@ -42,7 +42,7 @@ export default function Home() {
             <div className="mt-8 space-y-4">
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                  Welcome to Wallet App
+                  Welcome to Cashly
                 </h2>
                 <p className="text-gray-600">
                   Manage your finances with multiple wallets, custom categories, 

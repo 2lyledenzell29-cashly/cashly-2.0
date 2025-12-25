@@ -52,7 +52,7 @@ const BudgetsPage: React.FC = () => {
   return (
     <ProtectedRoute>
       <Head>
-        <title>Budgets - Wallet App</title>
+        <title>Budgets - Cashly</title>
         <meta name="description" content="Manage your budgets and track spending" />
       </Head>
       

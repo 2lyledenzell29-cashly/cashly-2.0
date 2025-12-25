@@ -55,8 +55,8 @@ const RegisterPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Register - Wallet App</title>
-        <meta name="description" content="Create your Wallet App account" />
+        <title>Register - Cashly</title>
+        <meta name="description" content="Create your Cashly account" />
       </Head>
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">

@@ -54,7 +54,7 @@ app.get("/api/health", (req, res) => {
 
 // API routes
 app.get('/api', (req, res) => {
-  res.json({ message: 'Wallet App API v2.0' });
+  res.json({ message: 'Cashly 2.0 API' });
 });
 
 app.use('/api', routes);

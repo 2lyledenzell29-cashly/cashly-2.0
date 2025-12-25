@@ -55,7 +55,7 @@ const FamilyWalletsPage: React.FC = () => {
   return (
     <ProtectedRoute>
       <Head>
-        <title>Family Wallets - Wallet App</title>
+        <title>Family Wallets - Cashly</title>
         <meta name="description" content="Manage your family wallets and invitations" />
       </Head>
       
