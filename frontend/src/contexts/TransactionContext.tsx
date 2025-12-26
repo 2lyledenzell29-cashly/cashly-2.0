@@ -10,6 +10,7 @@ import {
   TransactionListResponse 
 } from '@/utils/transactionApi';
 import { useAuth } from './AuthContext';
+import { requestManager } from '@/utils/requestManager';
 import toast from 'react-hot-toast';
 
 interface TransactionContextType {
@@ -25,10 +26,11 @@ interface TransactionContextType {
     transactionCount: number;
   };
   fetchTransactions: (filters?: TransactionFilters) => Promise<void>;
+  fetchSummary: (filters?: Omit<TransactionFilters, 'page' | 'limit'>) => Promise<void>;
+  fetchTransactionsAndSummary: (filters?: TransactionFilters) => Promise<void>;
   createTransaction: (data: CreateTransactionData) => Promise<void>;
   updateTransaction: (id: string, data: UpdateTransactionData) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
-  fetchSummary: (filters?: Omit<TransactionFilters, 'page' | 'limit'>) => Promise<void>;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
@@ -90,26 +92,31 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
     }
     
     console.log('fetchTransactions: Starting with filters:', filters);
-    try {
-      setLoading(true);
-      const response: TransactionListResponse = await TransactionService.getTransactions(filters);
-      console.log('fetchTransactions: Response received:', response);
-      setTransactions(response.transactions || []);
-      setTotal(response.total || 0);
-      setPage(response.page || 1);
-      setTotalPages(response.totalPages || 0);
-      console.log('fetchTransactions: State updated, transactions count:', response.transactions?.length || 0);
-    } catch (error) {
-      console.error('Failed to fetch transactions:', error);
-      toast.error('Failed to load transactions');
-      // Reset to empty array on error
-      setTransactions([]);
-      setTotal(0);
-      setPage(1);
-      setTotalPages(0);
-    } finally {
-      setLoading(false);
-    }
+    
+    const requestKey = `transactions-${JSON.stringify(filters)}`;
+    
+    return requestManager.debouncedRequest(requestKey, async () => {
+      try {
+        setLoading(true);
+        const response: TransactionListResponse = await TransactionService.getTransactions(filters);
+        console.log('fetchTransactions: Response received:', response);
+        setTransactions(response.transactions || []);
+        setTotal(response.total || 0);
+        setPage(response.page || 1);
+        setTotalPages(response.totalPages || 0);
+        console.log('fetchTransactions: State updated, transactions count:', response.transactions?.length || 0);
+      } catch (error) {
+        console.error('Failed to fetch transactions:', error);
+        toast.error('Failed to load transactions');
+        // Reset to empty array on error
+        setTransactions([]);
+        setTotal(0);
+        setPage(1);
+        setTotalPages(0);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
   };
 
   const fetchSummary = async (filters: Omit<TransactionFilters, 'page' | 'limit'> = {}) => {
@@ -119,13 +126,68 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
     }
     
     console.log('fetchSummary: Starting with filters:', filters);
-    try {
-      const summaryData = await TransactionService.getTransactionSummary(filters);
-      console.log('fetchSummary: Response received:', summaryData);
-      setSummary(summaryData);
-    } catch (error) {
-      console.error('Failed to fetch transaction summary:', error);
+    
+    const requestKey = `summary-${JSON.stringify(filters)}`;
+    
+    return requestManager.debouncedRequest(requestKey, async () => {
+      try {
+        const summaryData = await TransactionService.getTransactionSummary(filters);
+        console.log('fetchSummary: Response received:', summaryData);
+        setSummary(summaryData);
+      } catch (error) {
+        console.error('Failed to fetch transaction summary:', error);
+      }
+    }, 300);
+  };
+
+  // Combined function to fetch both transactions and summary efficiently
+  const fetchTransactionsAndSummary = async (filters: TransactionFilters = {}) => {
+    if (!user) {
+      console.log('fetchTransactionsAndSummary: No user, skipping');
+      return;
     }
+    
+    console.log('fetchTransactionsAndSummary: Starting with filters:', filters);
+    
+    const requestKey = `transactions-and-summary-${JSON.stringify(filters)}`;
+    
+    return requestManager.debouncedRequest(requestKey, async () => {
+      try {
+        setLoading(true);
+        
+        // Prepare summary filters (exclude page and limit)
+        const { page: _, limit: __, ...summaryFilters } = filters;
+        
+        // Make both requests in parallel
+        const [transactionsResponse, summaryData] = await Promise.all([
+          TransactionService.getTransactions(filters),
+          TransactionService.getTransactionSummary(summaryFilters)
+        ]);
+        
+        console.log('fetchTransactionsAndSummary: Both responses received');
+        
+        // Update transactions state
+        setTransactions(transactionsResponse.transactions || []);
+        setTotal(transactionsResponse.total || 0);
+        setPage(transactionsResponse.page || 1);
+        setTotalPages(transactionsResponse.totalPages || 0);
+        
+        // Update summary state
+        setSummary(summaryData);
+        
+        console.log('fetchTransactionsAndSummary: State updated, transactions count:', transactionsResponse.transactions?.length || 0);
+      } catch (error) {
+        console.error('Failed to fetch transactions and summary:', error);
+        toast.error('Failed to load data');
+        // Reset to empty array on error
+        setTransactions([]);
+        setTotal(0);
+        setPage(1);
+        setTotalPages(0);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
   };
 
   const createTransaction = async (data: CreateTransactionData): Promise<void> => {
@@ -185,6 +247,8 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
     loading,
     summary,
     fetchTransactions,
+    fetchSummary,
+    fetchTransactionsAndSummary,
     createTransaction,
     updateTransaction,
     deleteTransaction,

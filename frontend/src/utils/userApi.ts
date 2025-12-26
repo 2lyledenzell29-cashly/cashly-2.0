@@ -45,10 +45,21 @@ export class UserService {
       },
     });
 
-    const result: ApiResponse<T> = await response.json();
+    let result: ApiResponse<T>;
+    
+    try {
+      result = await response.json();
+    } catch (jsonError) {
+      // If JSON parsing fails, create a generic error response
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+      }
+      throw new Error('Invalid response format');
+    }
     
     if (!response.ok) {
-      throw new Error(result.error?.message || 'Request failed');
+      const errorMessage = result?.error?.message || `Request failed with status ${response.status}: ${response.statusText}`;
+      throw new Error(errorMessage);
     }
 
     return result;
