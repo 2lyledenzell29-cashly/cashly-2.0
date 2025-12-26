@@ -252,7 +252,6 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
     createTransaction,
     updateTransaction,
     deleteTransaction,
-    fetchSummary,
   };
 
   return <TransactionContext.Provider value={value}>{children}</TransactionContext.Provider>;
