@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { user: loggedInUser } = await AuthService.login(email, password);
       setUser(loggedInUser);
       toast.success('Login successful!');
-      router.push('/dashboard');
+      router.push('/transactions');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
       toast.error(message);
@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { user: registeredUser } = await AuthService.register(data);
       setUser(registeredUser);
       toast.success('Registration successful!');
-      router.push('/dashboard');
+      router.push('/transactions');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Registration failed';
       toast.error(message);
