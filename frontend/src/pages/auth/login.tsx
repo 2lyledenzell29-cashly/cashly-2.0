@@ -34,6 +34,7 @@ const LoginPage: React.FC = () => {
       <Head>
         <title>Login - Cashly</title>
         <meta name="description" content="Login to your Cashly account" />
+        <link rel="preload" href="/logo_cashly.png" as="image" />
       </Head>
 
       <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
@@ -45,6 +46,7 @@ const LoginPage: React.FC = () => {
               alt="Cashly Logo"
               width={40}
               height={40}
+              priority
               unoptimized
             />
             <h1 className="text-2xl font-bold text-white">Cashly</h1>
@@ -60,6 +62,7 @@ const LoginPage: React.FC = () => {
                 alt="Cashly Logo"
                 width={80}
                 height={80}
+                priority
                 unoptimized
               />
               {/* <Wallet className="w-10 h-10 text-white" /> */}

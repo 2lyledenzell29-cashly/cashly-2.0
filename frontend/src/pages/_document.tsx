@@ -4,13 +4,26 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* Main favicon */}
-        <link rel="icon" type="image/png" href="/logo_cashly.png" />
-        {/* Apple touch icon */}
-        <link rel="apple-touch-icon" href="/logo_cashly.png" />
-        {/* Additional favicon for different sizes */}
+        {/* Preload the logo for faster loading */}
+        <link rel="preload" href="/logo_cashly.png" as="image" />
+        
+        {/* Favicon configurations */}
+        <link rel="icon" type="image/png" sizes="32x32" href="/logo_cashly.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/logo_cashly.png" />
         <link rel="shortcut icon" href="/logo_cashly.png" />
+        
+        {/* Apple touch icon */}
+        <link rel="apple-touch-icon" sizes="180x180" href="/logo_cashly.png" />
+        
+        {/* Android/Chrome */}
+        <link rel="icon" type="image/png" sizes="192x192" href="/logo_cashly.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/logo_cashly.png" />
+        
+        {/* Theme color */}
         <meta name="theme-color" content="#2563eb" />
+        <meta name="msapplication-TileColor" content="#2563eb" />
+        
+        {/* Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
