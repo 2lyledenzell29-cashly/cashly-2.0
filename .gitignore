@@ -68,6 +68,9 @@ jspm_packages/
 .cache/
 public
 
+# Allow frontend public folder
+!frontend/public/
+
 # Storybook build outputs
 .out
 .storybook-out
