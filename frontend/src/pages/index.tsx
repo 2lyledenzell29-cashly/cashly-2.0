@@ -34,17 +34,19 @@ export default function Home() {
       </Head>
 
       <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+        {/* Mobile Header */}
+        <div className="lg:hidden flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 p-6">
+          <div className="flex items-center gap-3">
+            <Wallet className="w-10 h-10 text-white" />
+            <h1 className="text-2xl font-bold text-white">Cashly</h1>
+          </div>
+        </div>
+
         {/* Left Branding */}
         <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700">
           <div className="text-center text-white px-12">
             <div className="w-24 h-24 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Image
-                src="/logo_cashly.png"
-                alt="Cashly Logo"
-                width={40}
-                height={40}
-                unoptimized
-              />
+              <Wallet className="w-12 h-12 text-white" />
             </div>
             <h1 className="text-4xl font-bold mb-2">Cashly 2.0</h1>
             <p className="text-lg text-blue-100 mb-8">Personal Finance Management</p>

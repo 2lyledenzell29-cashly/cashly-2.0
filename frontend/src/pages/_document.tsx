@@ -4,25 +4,16 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* Preload the logo for faster loading */}
-        <link rel="preload" href="/logo_cashly.png" as="image" />
-        
-        {/* Favicon configurations */}
-        <link rel="icon" type="image/png" sizes="32x32" href="/logo_cashly.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/logo_cashly.png" />
-        <link rel="shortcut icon" href="/logo_cashly.png" />
-        
-        {/* Apple touch icon */}
-        <link rel="apple-touch-icon" sizes="180x180" href="/logo_cashly.png" />
-        
-        {/* Android/Chrome */}
-        <link rel="icon" type="image/png" sizes="192x192" href="/logo_cashly.png" />
-        <link rel="icon" type="image/png" sizes="512x512" href="/logo_cashly.png" />
-        
+        {/* Simple favicon using data URL with wallet icon */}
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1'/><path d='M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'/></svg>" />
+
+        {/* Fallback favicon */}
+        <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1'/><path d='M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'/></svg>" />
+
         {/* Theme color */}
         <meta name="theme-color" content="#2563eb" />
         <meta name="msapplication-TileColor" content="#2563eb" />
-        
+
         {/* Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

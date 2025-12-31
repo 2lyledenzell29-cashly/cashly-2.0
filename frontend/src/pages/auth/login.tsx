@@ -4,8 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Head from 'next/head';
 import { LoginForm } from '@/types';
-import { Eye, EyeOff, CheckCircle } from 'lucide-react';
-import Image from 'next/image';
+import { Eye, EyeOff, CheckCircle, Wallet } from 'lucide-react';
+
 
 const LoginPage: React.FC = () => {
   const { login, loading } = useAuth();
@@ -41,14 +41,7 @@ const LoginPage: React.FC = () => {
         {/* Mobile Header */}
         <div className="lg:hidden flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 p-6">
           <div className="flex items-center gap-3">
-            <Image
-              src="/logo_cashly.png"
-              alt="Cashly Logo"
-              width={40}
-              height={40}
-              priority
-              unoptimized
-            />
+            <Wallet className="w-10 h-10 text-white" />
             <h1 className="text-2xl font-bold text-white">Cashly</h1>
           </div>
         </div>
@@ -57,15 +50,7 @@ const LoginPage: React.FC = () => {
         <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700">
           <div className="text-center text-white px-12">
             <div className="w-24 h-24 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Image
-                src="/logo_cashly.png"
-                alt="Cashly Logo"
-                width={80}
-                height={80}
-                priority
-                unoptimized
-              />
-              {/* <Wallet className="w-10 h-10 text-white" /> */}
+              <Wallet className="w-10 h-10 text-white" />
             </div>
 
             <h1 className="text-4xl font-bold mb-2">Cashly</h1>

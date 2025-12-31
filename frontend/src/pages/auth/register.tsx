@@ -6,8 +6,7 @@ import Head from 'next/head';
 import { RegisterForm } from '@/types';
 import { validatePassword } from '@/utils/auth';
 import PasswordStrengthIndicator from '@/components/PasswordStrengthIndicator';
-import { Eye, EyeOff } from 'lucide-react';
-import Image from 'next/image';
+import { Eye, EyeOff, Wallet } from 'lucide-react';
 
 const RegisterPage: React.FC = () => {
   const { register: registerUser, loading } = useAuth();
@@ -64,14 +63,7 @@ const RegisterPage: React.FC = () => {
         {/* Mobile Header */}
         <div className="lg:hidden flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 p-6">
           <div className="flex items-center gap-3">
-            <Image
-              src="/logo_cashly.png"
-              alt="Cashly Logo"
-              width={40}
-              height={40}
-              priority
-              unoptimized
-            />
+            <Wallet className="w-10 h-10 text-white" />
             <h1 className="text-2xl font-bold text-white">Cashly</h1>
           </div>
         </div>
@@ -80,14 +72,7 @@ const RegisterPage: React.FC = () => {
         <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700">
           <div className="text-center text-white px-12">
             <div className="w-24 h-24 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Image
-                src="/logo_cashly.png"
-                alt="Cashly Logo"
-                width={80}
-                height={80}
-                priority
-                unoptimized
-              />
+              <Wallet className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-4xl font-bold mb-2">Cashly</h1>
             <p className="text-lg text-blue-100 mb-8">
