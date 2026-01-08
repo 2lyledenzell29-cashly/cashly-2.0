@@ -52,6 +52,7 @@ export interface CategoryBreakdownItem {
   total_amount: number;
   transaction_count: number;
   percentage: number;
+  transaction_types?: ('Income' | 'Expense')[];
 }
 
 export interface CategoryBreakdown {
@@ -113,7 +114,7 @@ export const dashboardApi = {
     });
 
     const result: ApiResponse<DashboardSummary> = await response.json();
-    
+
     if (!result.success) {
       throw new Error(result.error?.message || 'Failed to fetch dashboard summary');
     }
@@ -125,7 +126,7 @@ export const dashboardApi = {
   async getTransactionReport(filters: TransactionReportFilters = {}): Promise<TransactionReport> {
     const token = AuthService.getToken();
     const queryParams = new URLSearchParams();
-    
+
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         queryParams.append(key, value.toString());
@@ -140,7 +141,7 @@ export const dashboardApi = {
     });
 
     const result: ApiResponse<TransactionReport> = await response.json();
-    
+
     if (!result.success) {
       throw new Error(result.error?.message || 'Failed to fetch transaction report');
     }
@@ -157,7 +158,7 @@ export const dashboardApi = {
   } = {}): Promise<CategoryBreakdown> {
     const token = AuthService.getToken();
     const queryParams = new URLSearchParams();
-    
+
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         queryParams.append(key, value.toString());
@@ -172,7 +173,7 @@ export const dashboardApi = {
     });
 
     const result: ApiResponse<CategoryBreakdown> = await response.json();
-    
+
     if (!result.success) {
       throw new Error(result.error?.message || 'Failed to fetch category breakdown');
     }
@@ -188,7 +189,7 @@ export const dashboardApi = {
   } = {}): Promise<TrendsReport> {
     const token = AuthService.getToken();
     const queryParams = new URLSearchParams();
-    
+
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         queryParams.append(key, value.toString());
@@ -203,7 +204,7 @@ export const dashboardApi = {
     });
 
     const result: ApiResponse<TrendsReport> = await response.json();
-    
+
     if (!result.success) {
       throw new Error(result.error?.message || 'Failed to fetch trends report');
     }
@@ -221,7 +222,7 @@ export const dashboardApi = {
     const token = AuthService.getToken();
     const queryParams = new URLSearchParams();
     queryParams.append('chart_type', chartType);
-    
+
     Object.entries(options).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         queryParams.append(key, value.toString());
@@ -236,7 +237,7 @@ export const dashboardApi = {
     });
 
     const result: ApiResponse<ChartData> = await response.json();
-    
+
     if (!result.success) {
       throw new Error(result.error?.message || 'Failed to fetch chart data');
     }

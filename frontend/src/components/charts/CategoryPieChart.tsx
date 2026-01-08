@@ -31,7 +31,50 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({
 
   // Create a unique cache key based on the parameters
   const cacheKey = `category-pie-${type.toLowerCase()}-${walletId || 'all'}`;
-  const data = chartData[cacheKey] || chartData['category-pie'];
+  const rawData = chartData[cacheKey] || chartData['category-pie'];
+
+  // Filter out categories that contain "*" in their names
+  const filteredData = React.useMemo(() => {
+    if (!rawData || !rawData.labels || !rawData.datasets[0]) {
+      return rawData;
+    }
+
+    const filteredIndices: number[] = [];
+    const filteredLabels: string[] = [];
+    const filteredDataValues: number[] = [];
+    const filteredBackgroundColors: string[] = [];
+    const filteredBorderColors: string[] = [];
+
+    rawData.labels.forEach((label: string, index: number) => {
+      // Exclude categories that contain "*" in their name
+      if (!label.includes('*')) {
+        filteredIndices.push(index);
+        filteredLabels.push(label);
+        filteredDataValues.push(rawData.datasets[0].data[index]);
+
+        // Preserve colors if they exist
+        if (rawData.datasets[0].backgroundColor && Array.isArray(rawData.datasets[0].backgroundColor)) {
+          filteredBackgroundColors.push(rawData.datasets[0].backgroundColor[index]);
+        }
+        if (rawData.datasets[0].borderColor && Array.isArray(rawData.datasets[0].borderColor)) {
+          filteredBorderColors.push(rawData.datasets[0].borderColor[index]);
+        }
+      }
+    });
+
+    return {
+      ...rawData,
+      labels: filteredLabels,
+      datasets: [{
+        ...rawData.datasets[0],
+        data: filteredDataValues,
+        backgroundColor: filteredBackgroundColors.length > 0 ? filteredBackgroundColors : rawData.datasets[0].backgroundColor,
+        borderColor: filteredBorderColors.length > 0 ? filteredBorderColors : rawData.datasets[0].borderColor,
+      }]
+    };
+  }, [rawData]);
+
+  const data = filteredData;
 
   const options = {
     responsive: true,
@@ -50,12 +93,16 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function (context: any) {
             const label = context.label || '';
             const value = context.parsed || 0;
             const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
             const percentage = ((value / total) * 100).toFixed(1);
-            return `${label}: $${value.toLocaleString()} (${percentage}%)`;
+            const formattedValue = new Intl.NumberFormat('en-PH', {
+              style: 'currency',
+              currency: 'PHP'
+            }).format(value);
+            return `${label}: ${formattedValue} (${percentage}%)`;
           }
         }
       }

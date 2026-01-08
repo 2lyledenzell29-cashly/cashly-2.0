@@ -213,7 +213,10 @@ const DashboardContent: React.FC = () => {
                 </div>
               ) : categoryBreakdown ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <CategoryBreakdownTable breakdown={categoryBreakdown} />
+                  <CategoryBreakdownTable 
+                    breakdown={categoryBreakdown} 
+                    showTypeIndicators={!reportFilters.type || reportFilters.type === ''}
+                  />
                   <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Visual Breakdown</h3>
                     <CategoryPieChart 
