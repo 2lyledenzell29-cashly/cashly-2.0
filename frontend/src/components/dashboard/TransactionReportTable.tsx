@@ -1,5 +1,6 @@
 import React from 'react';
 import { TransactionReport } from '@/utils/dashboardApi';
+import { useCategory } from '@/contexts/CategoryContext';
 
 interface TransactionReportTableProps {
   report: TransactionReport;
@@ -10,6 +11,13 @@ const TransactionReportTable: React.FC<TransactionReportTableProps> = ({
   report,
   onPageChange
 }) => {
+  const { categories = [] } = useCategory();
+
+  const getCategoryName = (categoryId: string | null) => {
+    if (!categoryId) return 'Uncategorized';
+    const category = categories.find(c => c.id === categoryId);
+    return category?.name || 'Uncategorized';
+  };
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-PH', {
       style: 'currency',
@@ -29,18 +37,18 @@ const TransactionReportTable: React.FC<TransactionReportTableProps> = ({
     const { page, total_pages } = report.pagination;
     const pages = [];
     const maxVisible = 5;
-    
+
     let start = Math.max(1, page - Math.floor(maxVisible / 2));
     let end = Math.min(total_pages, start + maxVisible - 1);
-    
+
     if (end - start + 1 < maxVisible) {
       start = Math.max(1, end - maxVisible + 1);
     }
-    
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
-    
+
     return pages;
   };
 
@@ -116,7 +124,7 @@ const TransactionReportTable: React.FC<TransactionReportTableProps> = ({
                     {transaction.title}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {transaction.category_name || 'Uncategorized'}
+                    {getCategoryName(transaction.category_id)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`font-medium ${getTypeColor(transaction.type)}`}>
@@ -158,13 +166,12 @@ const TransactionReportTable: React.FC<TransactionReportTableProps> = ({
                 </span>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                  transaction.type === 'Income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
+                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${transaction.type === 'Income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
                   {transaction.type}
                 </span>
                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-800">
-                  {transaction.category_name || 'Uncategorized'}
+                  {getCategoryName(transaction.category_id)}
                 </span>
               </div>
             </div>
@@ -194,11 +201,10 @@ const TransactionReportTable: React.FC<TransactionReportTableProps> = ({
                   <button
                     key={pageNum}
                     onClick={() => onPageChange(pageNum)}
-                    className={`px-3 py-1 text-sm border rounded-md ${
-                      pageNum === report.pagination.page
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'border-gray-300 hover:bg-gray-50'
-                    }`}
+                    className={`px-3 py-1 text-sm border rounded-md ${pageNum === report.pagination.page
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'border-gray-300 hover:bg-gray-50'
+                      }`}
                   >
                     {pageNum}
                   </button>
