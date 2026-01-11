@@ -72,11 +72,11 @@ const InstructionModal: React.FC<InstructionModalProps> = ({
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div
-          className={`relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+          className={`relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col transform transition-all duration-300 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
             }`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
             <div className="flex items-center space-x-3">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -105,7 +105,7 @@ const InstructionModal: React.FC<InstructionModalProps> = ({
           </div>
 
           {/* Progress bar */}
-          <div className="px-6 pt-4">
+          <div className="px-6 pt-4 flex-shrink-0">
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
                 className="bg-blue-500 h-2 rounded-full transition-all duration-300"
@@ -114,69 +114,21 @@ const InstructionModal: React.FC<InstructionModalProps> = ({
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-6">
-            {/* Special layout for tall images (category and family wallets) */}
-            {currentInstruction.image && (currentInstruction.image.includes('category.png') || currentInstruction.image.includes('Family Wallets.png')) ? (
-              <div className="space-y-4">
-                {/* Image on top */}
-                <div className="flex items-center justify-center">
-                  <div className="w-full max-w-lg">
-                    <div className="bg-gray-100 rounded-lg overflow-hidden border border-gray-200 inline-block">
-                      <img
-                        src={currentInstruction.image}
-                        alt={`${currentInstruction.header} illustration`}
-                        className="max-w-full h-auto object-contain block"
-                        style={{ maxHeight: '400px' }}
-                        onError={(e) => {
-                          // Fallback to placeholder if image fails to load
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const parent = target.parentElement;
-                          if (parent) {
-                            parent.innerHTML = `
-                              <div class="w-full h-[200px] flex items-center justify-center border-2 border-dashed border-gray-300">
-                                <div class="text-center text-gray-500">
-                                  <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                  </svg>
-                                  <p class="text-sm">Image not found</p>
-                                  <p class="text-xs text-gray-400 mt-1">${currentInstruction.image}</p>
-                                </div>
-                              </div>
-                            `;
-                          }
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                {/* Text below, centered */}
-                <div className="flex items-center justify-center min-h-[100px]">
-                  <p className="text-gray-700 leading-relaxed text-base text-center max-w-lg">
-                    {currentInstruction.body}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              /* Default layout for other images */
-              <div className={`${currentInstruction.image ? 'grid grid-cols-1 lg:grid-cols-2 gap-6' : ''}`}>
-                {/* Text content */}
-                <div className={`${currentInstruction.image ? 'flex items-center' : 'text-center'}`}>
-                  <p className="text-gray-700 leading-relaxed text-base">
-                    {currentInstruction.body}
-                  </p>
-                </div>
-
-                {/* Image content */}
-                {currentInstruction.image && (
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-6">
+              {/* Special layout for tall images (category and family wallets) */}
+              {currentInstruction.image && (currentInstruction.image.includes('category.png') || currentInstruction.image.includes('Family Wallets.png')) ? (
+                <div className="space-y-4">
+                  {/* Image on top */}
                   <div className="flex items-center justify-center">
-                    <div className="w-full max-w-md">
-                      <div className="bg-gray-100 rounded-lg overflow-hidden border border-gray-200 min-h-[250px] max-h-[500px] flex items-center justify-center">
+                    <div className="w-full max-w-lg">
+                      <div className="bg-gray-100 rounded-lg overflow-hidden border border-gray-200 inline-block">
                         <img
                           src={currentInstruction.image}
                           alt={`${currentInstruction.header} illustration`}
-                          className="max-w-full max-h-full object-contain"
+                          className="max-w-full h-auto object-contain block"
+                          style={{ maxHeight: '400px' }}
                           onError={(e) => {
                             // Fallback to placeholder if image fails to load
                             const target = e.target as HTMLImageElement;
@@ -184,7 +136,7 @@ const InstructionModal: React.FC<InstructionModalProps> = ({
                             const parent = target.parentElement;
                             if (parent) {
                               parent.innerHTML = `
-                                <div class="w-full h-full flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <div class="w-full h-[200px] flex items-center justify-center border-2 border-dashed border-gray-300">
                                   <div class="text-center text-gray-500">
                                     <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -200,13 +152,63 @@ const InstructionModal: React.FC<InstructionModalProps> = ({
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
-            )}
+                  {/* Text below, centered */}
+                  <div className="flex items-center justify-center min-h-[100px]">
+                    <p className="text-gray-700 leading-relaxed text-base text-center max-w-lg">
+                      {currentInstruction.body}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                /* Default layout for other images */
+                <div className={`${currentInstruction.image ? 'grid grid-cols-1 lg:grid-cols-2 gap-6' : ''}`}>
+                  {/* Text content */}
+                  <div className={`${currentInstruction.image ? 'flex items-center' : 'text-center'}`}>
+                    <p className="text-gray-700 leading-relaxed text-base">
+                      {currentInstruction.body}
+                    </p>
+                  </div>
+
+                  {/* Image content */}
+                  {currentInstruction.image && (
+                    <div className="flex items-center justify-center">
+                      <div className="w-full max-w-md">
+                        <div className="bg-gray-100 rounded-lg overflow-hidden border border-gray-200 min-h-[250px] max-h-[500px] flex items-center justify-center">
+                          <img
+                            src={currentInstruction.image}
+                            alt={`${currentInstruction.header} illustration`}
+                            className="max-w-full max-h-full object-contain"
+                            onError={(e) => {
+                              // Fallback to placeholder if image fails to load
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                parent.innerHTML = `
+                                  <div class="w-full h-full flex items-center justify-center border-2 border-dashed border-gray-300">
+                                    <div class="text-center text-gray-500">
+                                      <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                      </svg>
+                                      <p class="text-sm">Image not found</p>
+                                      <p class="text-xs text-gray-400 mt-1">${currentInstruction.image}</p>
+                                    </div>
+                                  </div>
+                                `;
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
             <div className="flex space-x-2">
               {showOnFirstVisit && (
                 <Button
