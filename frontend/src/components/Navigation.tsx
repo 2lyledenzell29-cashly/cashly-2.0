@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
+import InstructionModal from './InstructionModal';
+import { useInstructions } from '@/hooks/useInstructions';
 
 interface NavigationProps {
   currentPage?: string;
@@ -12,6 +14,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { showInstructions, openInstructions, closeInstructions } = useInstructions();
 
   const navItems = [
     { 
@@ -172,6 +175,13 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
                 </button>
                 <span className="text-gray-300">•</span>
                 <button
+                  onClick={openInstructions}
+                  className="text-xs text-gray-500 hover:text-gray-700"
+                >
+                  Help
+                </button>
+                <span className="text-gray-300">•</span>
+                <button
                   onClick={logout}
                   className="text-xs text-gray-500 hover:text-gray-700"
                 >
@@ -200,6 +210,13 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
           <div className="w-10" /> {/* Spacer for centering */}
         </div>
       </div>
+
+      {/* Instruction Modal */}
+      <InstructionModal
+        isOpen={showInstructions}
+        onClose={closeInstructions}
+        showOnFirstVisit={true}
+      />
     </>
   );
 };
