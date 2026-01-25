@@ -20,7 +20,7 @@ export const instructionSteps: InstructionStep[] = [
     },
     {
         header: "Track Your Transactions",
-        body: "Log your income and expenses easily. Each transaction can be assigned to a category and wallet, giving you detailed insights into your spending patterns. You can also add notes and set dates for better organization.",
+        body: "Log your income and expenses easily. Each transaction can be assigned to a category and wallet, giving you detailed insights into your spending patterns. You can also add notes for better organization.",
         image: "/images/instructions/transaction.png"
     },
     {
